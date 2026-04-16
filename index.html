@@ -772,17 +772,34 @@ document.getElementById('panel-close').onclick = () => {
 };
 
 // ── Filters ──
+// ── Shared visibility state ──────────────────────────────────────────────
+// A marker is visible only when BOTH conditions are true:
+//   1. Its category matches the active filter (or filter is 'all')
+//   2. At least one of its diseases is in the activeDiseases set
+//
+// Both the filter buttons and the legend toggles call applyVisibility()
+// so they always respect each other's state.
+
+const activeDiseases = new Set(['leptospirosis', 'tularemia', 'hantavirus', 'vector', 'event']);
+let activeFilter = 'all';
+
+function applyVisibility() {
+  allMarkers.forEach(m => {
+    const categoryMatch = activeFilter === 'all' || m.locData.category.includes(activeFilter);
+    const diseaseMatch  = m.locData.diseases.some(d => activeDiseases.has(d));
+    const show = categoryMatch && diseaseMatch;
+    if (show) { if (!markerGroup.hasLayer(m)) markerGroup.addLayer(m); }
+    else       { if (markerGroup.hasLayer(m)) markerGroup.removeLayer(m); }
+  });
+}
+
+// ── Filter buttons ──
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    const filter = btn.dataset.filter;
-    allMarkers.forEach(m => {
-      const cats = m.locData.category;
-      const show = filter === 'all' || cats.includes(filter);
-      if (show) { if (!markerGroup.hasLayer(m)) markerGroup.addLayer(m); }
-      else { if (markerGroup.hasLayer(m)) markerGroup.removeLayer(m); }
-    });
+    activeFilter = btn.dataset.filter;
+    applyVisibility();
   };
 });
 
@@ -791,13 +808,12 @@ document.querySelectorAll('.legend-item').forEach(item => {
   item.onclick = () => {
     const disease = item.dataset.disease;
     item.classList.toggle('active');
-    const active = item.classList.contains('active');
-    allMarkers.forEach(m => {
-      if (m.locData.diseases.includes(disease)) {
-        if (active) { if (!markerGroup.hasLayer(m)) markerGroup.addLayer(m); }
-        else { if (markerGroup.hasLayer(m)) markerGroup.removeLayer(m); }
-      }
-    });
+    if (item.classList.contains('active')) {
+      activeDiseases.add(disease);
+    } else {
+      activeDiseases.delete(disease);
+    }
+    applyVisibility();
   };
 });
 

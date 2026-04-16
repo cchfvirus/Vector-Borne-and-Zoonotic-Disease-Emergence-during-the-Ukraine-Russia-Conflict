@@ -76,7 +76,7 @@
   .source-tag { font-size: 9px; color: #3a6080; margin-top: 6px; font-style: italic; }
 
   /* Leaflet overrides */
-  .leaflet-container { background: #0d1a26; }
+  .leaflet-container { background: #e8e0d8; }  /* neutral for light basemap */
   .leaflet-control-zoom a { background: #1a2a3a; color: #7a9bb5; border-color: #2a3f52; }
   .leaflet-control-zoom a:hover { background: #1e3a52; color: #b8d8f0; }
   .leaflet-control-attribution { background: rgba(10,20,30,0.7) !important; color: #3a5a7a !important; font-size: 9px; }
@@ -126,8 +126,8 @@
 
   #info-bar {
     position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-    z-index: 1000; background: rgba(18,32,46,0.9); border: 1px solid #2a3f52;
-    border-radius: 20px; padding: 5px 14px; font-size: 10px; color: #5a8aaa;
+    z-index: 1000; background: rgba(255,255,255,0.88); border: 1px solid #bbb;
+    border-radius: 20px; padding: 5px 14px; font-size: 10px; color: #444;
     pointer-events: none;
   }
 </style>
@@ -168,7 +168,10 @@
 </div>
 
 <div id="map"></div>
-<div id="info-bar">Click any marker for details &nbsp;·&nbsp; Scroll to zoom &nbsp;·&nbsp; Drag to pan</div>
+<div id="info-bar">
+  Click any marker for details &nbsp;·&nbsp; Scroll to zoom &nbsp;·&nbsp; Drag to pan
+  &nbsp;·&nbsp; Front line: <span id="frontline-status" style="color:#e88;">loading…</span>
+</div>
 
 <div id="panel">
   <div id="panel-header">
@@ -195,11 +198,6 @@ const map = L.map('map', {
 
 const basemaps = {
 
-  "🌑 Dark (default)": L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png',
-    { attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>', subdomains: 'abcd', maxZoom: 19 }
-  ),
-
   "🗺️ Political / Boundaries": L.tileLayer(
     'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
     { attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>', subdomains: 'abcd', maxZoom: 19 }
@@ -222,8 +220,8 @@ const basemaps = {
 
 };
 
-// Add default basemap
-basemaps["🌑 Dark (default)"].addTo(map);
+// Add default basemap — Political / Boundaries
+basemaps["🗺️ Political / Boundaries"].addTo(map);
 
 // Layer control (basemaps only — overlays added later after markers built)
 // Store reference so we can add overlay group after markers are created
@@ -666,6 +664,77 @@ locations.forEach(loc => {
   // markers added to map via markerGroup below
   allMarkers.push(marker);
 });
+
+// ── Front line overlay (DeepStateMap via cyterat/deepstate-map-data) ──────
+// Fetches the latest daily GeoJSON of Russian-occupied territory from a
+// public GitHub repository updated every day at 03:00 UTC.
+// Source: github.com/cyterat/deepstate-map-data (CC0 / open data)
+
+let frontlineLayer = null;
+let frontlineLoaded = false;
+
+function loadFrontline() {
+  if (frontlineLoaded) return;
+  frontlineLoaded = true;
+
+  const statusEl = document.getElementById('frontline-status');
+  if (statusEl) statusEl.textContent = 'Loading…';
+
+  // Try today's date first, then fall back up to 7 days
+  const tryDates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const yyyy = d.getFullYear();
+    const mm   = String(d.getMonth()+1).padStart(2,'0');
+    const dd   = String(d.getDate()).padStart(2,'0');
+    tryDates.push(`${yyyy}-${mm}-${dd}`);
+  }
+
+  async function tryNext(idx) {
+    if (idx >= tryDates.length) {
+      if (statusEl) statusEl.textContent = 'Data unavailable';
+      return;
+    }
+    const dateStr = tryDates[idx];
+    const url = `https://raw.githubusercontent.com/cyterat/deepstate-map-data/main/data/deepstatemap_data_${dateStr}.geojson`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) { tryNext(idx+1); return; }
+      const geojson = await res.json();
+
+      frontlineLayer = L.geoJSON(geojson, {
+        style: {
+          fillColor: '#c0392b',
+          fillOpacity: 0.22,
+          color: '#e74c3c',
+          weight: 1.8,
+          opacity: 0.85
+        },
+        onEachFeature: (feature, layer) => {
+          layer.bindTooltip(
+            `<div style="font-size:11px;font-family:Arial;padding:4px 6px;">
+              <strong style="color:#c0392b">Russian-occupied territory</strong><br>
+              Source: DeepStateMap via cyterat/deepstate-map-data<br>
+              Data date: <strong>${dateStr}</strong>
+            </div>`,
+            { sticky: true, opacity: 0.95 }
+          );
+        }
+      });
+
+      layerControl.addOverlay(frontlineLayer, '🔴 Front Line / Occupied Territory');
+      frontlineLayer.addTo(map);
+      if (statusEl) statusEl.textContent = `Data: ${dateStr}`;
+    } catch(e) {
+      tryNext(idx+1);
+    }
+  }
+  tryNext(0);
+}
+
+// Load front line immediately on page load
+loadFrontline();
 
 // ── Marker overlay group (for layer control toggle) ──────────────────────
 const markerGroup = L.layerGroup(allMarkers).addTo(map);

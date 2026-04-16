@@ -30,19 +30,6 @@
   .legend-item.active { border-color: #4a8fba; background: #162230; }
   .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 
-  #controls {
-    background: #12202e;
-    border-bottom: 1px solid #1e3347;
-    padding: 8px 20px;
-    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
-  }
-  .filter-btn {
-    padding: 5px 12px; border-radius: 20px; border: 1px solid #2a4f6a;
-    background: transparent; color: #7a9bb5; font-size: 11px; cursor: pointer; transition: all 0.2s;
-  }
-  .filter-btn:hover, .filter-btn.active { background: #1e4060; color: #b8d8f0; border-color: #4a8fba; }
-  .filter-label { font-size: 11px; color: #4a6f8a; margin-right: 4px; }
-
   #map { flex: 1; }
 
   #panel {
@@ -156,15 +143,6 @@
       <div class="legend-dot" style="background:#f5a623; border: 2px solid #fff;"></div> Key Event
     </div>
   </div>
-</div>
-
-<div id="controls">
-  <span class="filter-label">FILTER:</span>
-  <button class="filter-btn active" data-filter="all">All Locations</button>
-  <button class="filter-btn" data-filter="outbreak">Active Outbreaks</button>
-  <button class="filter-btn" data-filter="endemic">Endemic Foci</button>
-  <button class="filter-btn" data-filter="surveillance">Surveillance Sites</button>
-  <button class="filter-btn" data-filter="crossborder">Cross-border Risk</button>
 </div>
 
 <div id="map"></div>
@@ -661,7 +639,8 @@ locations.forEach(loc => {
 
   marker.on('click', () => showPanel(loc));
   marker.locData = loc;
-  // markers added to map via markerGroup below
+  marker._visibleOnMap = true;
+  marker.addTo(map);
   allMarkers.push(marker);
 });
 
@@ -737,8 +716,9 @@ function loadFrontline() {
 loadFrontline();
 
 // ── Marker overlay group (for layer control toggle) ──────────────────────
-const markerGroup = L.layerGroup(allMarkers).addTo(map);
-layerControl.addOverlay(markerGroup, "📍 Disease Locations");
+// Markers are managed directly on the map — no LayerGroup needed for visibility
+// (LayerGroup hasLayer/addLayer ID instability caused toggle bugs)
+const markerGroup = L.layerGroup([]).addTo(map); // kept for layer control only
 
 // ── Panel ──
 function showPanel(loc) {
@@ -781,27 +761,24 @@ document.getElementById('panel-close').onclick = () => {
 // so they always respect each other's state.
 
 const activeDiseases = new Set(['leptospirosis', 'tularemia', 'hantavirus', 'vector', 'event']);
-let activeFilter = 'all';
+
 
 function applyVisibility() {
   allMarkers.forEach(m => {
-    const categoryMatch = activeFilter === 'all' || m.locData.category.includes(activeFilter);
+    const categoryMatch = true; // filter removed — all categories shown
     const diseaseMatch  = m.locData.diseases.some(d => activeDiseases.has(d));
     const show = categoryMatch && diseaseMatch;
-    if (show) { if (!markerGroup.hasLayer(m)) markerGroup.addLayer(m); }
-    else       { if (markerGroup.hasLayer(m)) markerGroup.removeLayer(m); }
+    if (show && !m._visibleOnMap) {
+      m.addTo(map);
+      m._visibleOnMap = true;
+    } else if (!show && m._visibleOnMap) {
+      map.removeLayer(m);
+      m._visibleOnMap = false;
+    }
   });
 }
 
-// ── Filter buttons ──
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeFilter = btn.dataset.filter;
-    applyVisibility();
-  };
-});
+
 
 // ── Legend toggles ──
 document.querySelectorAll('.legend-item').forEach(item => {

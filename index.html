@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rodent & Vector-Borne Zoonoses — Ukraine–Russia Conflict (2022–2026)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f1923; color: #e8edf2; height: 100vh; display: flex; flex-direction: column; }
+
+  #header {
+    background: linear-gradient(135deg, #1a2a3a 0%, #0f1923 100%);
+    border-bottom: 1px solid #2a3f52;
+    padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  #header h1 { font-size: 14px; font-weight: 700; color: #e8edf2; letter-spacing: 0.3px; }
+  #header p { font-size: 11px; color: #7a9bb5; margin-top: 2px; }
+
+  #legend {
+    display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 5px; font-size: 11px; color: #a0bcd0; cursor: pointer;
+    padding: 4px 8px; border-radius: 4px; border: 1px solid transparent; transition: all 0.2s;
+  }
+  .legend-item:hover { border-color: #2a4f6a; background: #162230; }
+  .legend-item.active { border-color: #4a8fba; background: #162230; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+  #controls {
+    background: #12202e;
+    border-bottom: 1px solid #1e3347;
+    padding: 8px 20px;
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  }
+  .filter-btn {
+    padding: 5px 12px; border-radius: 20px; border: 1px solid #2a4f6a;
+    background: transparent; color: #7a9bb5; font-size: 11px; cursor: pointer; transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active { background: #1e4060; color: #b8d8f0; border-color: #4a8fba; }
+  .filter-label { font-size: 11px; color: #4a6f8a; margin-right: 4px; }
+
+  #map { flex: 1; }
+
+  #panel {
+    position: absolute; right: 12px; top: 120px; z-index: 1000;
+    width: 300px; background: #12202e; border: 1px solid #2a3f52;
+    border-radius: 8px; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    display: none;
+  }
+  #panel.visible { display: block; }
+  #panel-header {
+    background: #1a3448; padding: 12px 14px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  #panel-title { font-size: 13px; font-weight: 700; color: #c8e0f0; line-height: 1.3; }
+  #panel-subtitle { font-size: 10px; color: #5a8aaa; margin-top: 2px; }
+  #panel-close { background: none; border: none; color: #5a7a9a; cursor: pointer; font-size: 16px; padding: 0 0 0 8px; }
+  #panel-close:hover { color: #c8e0f0; }
+  #panel-body { padding: 12px 14px; max-height: 400px; overflow-y: auto; }
+  .disease-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 600; margin: 2px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .stat-row { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; border-bottom: 1px solid #1a3048; }
+  .stat-label { font-size: 11px; color: #7a9bb5; }
+  .stat-value { font-size: 12px; font-weight: 700; color: #d0e8f8; }
+  .stat-value.high { color: #e05050; }
+  .stat-value.med { color: #e0a030; }
+  .stat-value.low { color: #50c878; }
+  .note-text { font-size: 10px; color: #5a8aaa; line-height: 1.5; margin-top: 8px; }
+  .source-tag { font-size: 9px; color: #3a6080; margin-top: 6px; font-style: italic; }
+
+  /* Leaflet overrides */
+  .leaflet-container { background: #0d1a26; }
+  .leaflet-control-zoom a { background: #1a2a3a; color: #7a9bb5; border-color: #2a3f52; }
+  .leaflet-control-zoom a:hover { background: #1e3a52; color: #b8d8f0; }
+  .leaflet-control-attribution { background: rgba(10,20,30,0.7) !important; color: #3a5a7a !important; font-size: 9px; }
+  .leaflet-control-attribution a { color: #4a7a9a !important; }
+
+  /* Pulse animation for active outbreaks */
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .pulse-marker { animation: pulse 2s infinite; }
+
+  #info-bar {
+    position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+    z-index: 1000; background: rgba(18,32,46,0.9); border: 1px solid #2a3f52;
+    border-radius: 20px; padding: 5px 14px; font-size: 10px; color: #5a8aaa;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div>
+    <h1>Rodent &amp; Vector-Borne Zoonoses — Ukraine–Russia Conflict (2022–2026)</h1>
+    <p>Geographic data synthesised from peer-reviewed literature &amp; surveillance reports</p>
+  </div>
+  <div id="legend">
+    <div class="legend-item active" data-disease="leptospirosis">
+      <div class="legend-dot" style="background:#e05050"></div> Leptospirosis
+    </div>
+    <div class="legend-item active" data-disease="tularemia">
+      <div class="legend-dot" style="background:#e0a030"></div> Tularemia
+    </div>
+    <div class="legend-item active" data-disease="hantavirus">
+      <div class="legend-dot" style="background:#9b59f5"></div> Hantavirus
+    </div>
+    <div class="legend-item active" data-disease="vector">
+      <div class="legend-dot" style="background:#20c0a0"></div> Vector-borne / Other
+    </div>
+    <div class="legend-item active" data-disease="event">
+      <div class="legend-dot" style="background:#f5a623; border: 2px solid #fff;"></div> Key Event
+    </div>
+  </div>
+</div>
+
+<div id="controls">
+  <span class="filter-label">FILTER:</span>
+  <button class="filter-btn active" data-filter="all">All Locations</button>
+  <button class="filter-btn" data-filter="outbreak">Active Outbreaks</button>
+  <button class="filter-btn" data-filter="endemic">Endemic Foci</button>
+  <button class="filter-btn" data-filter="surveillance">Surveillance Sites</button>
+  <button class="filter-btn" data-filter="crossborder">Cross-border Risk</button>
+</div>
+
+<div id="map"></div>
+<div id="info-bar">Click any marker for details &nbsp;·&nbsp; Scroll to zoom &nbsp;·&nbsp; Drag to pan</div>
+
+<div id="panel">
+  <div id="panel-header">
+    <div>
+      <div id="panel-title">Location</div>
+      <div id="panel-subtitle"></div>
+    </div>
+    <button id="panel-close">✕</button>
+  </div>
+  <div id="panel-body"></div>
+</div>
+
+<script>
+// Map init
+const map = L.map('map', {
+  center: [49.5, 31.5],
+  zoom: 6,
+  zoomControl: true,
+  minZoom: 4,
+  maxZoom: 10
+});
+
+// Dark tile layer
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CARTO',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(map);
+
+// Color scheme
+const COLORS = {
+  leptospirosis: '#e05050',
+  tularemia: '#e0a030',
+  hantavirus: '#9b59f5',
+  vector: '#20c0a0',
+  event: '#f5a623'
+};
+
+// Disease tag colors
+const TAG_STYLES = {
+  leptospirosis: 'background:#3a1515; color:#e05050; border:1px solid #e05050',
+  tularemia: 'background:#3a2a10; color:#e0a030; border:1px solid #e0a030',
+  hantavirus: 'background:#2a1a45; color:#9b59f5; border:1px solid #9b59f5',
+  vector: 'background:#0a2a25; color:#20c0a0; border:1px solid #20c0a0',
+  event: 'background:#3a2a00; color:#f5a623; border:1px solid #f5a623'
+};
+
+// All location data
+const locations = [
+  // ── LEPTOSPIROSIS OBLASTS ──
+  {
+    id: 'zakarpattia',
+    name: 'Zakarpattia Oblast',
+    subtitle: 'Highest leptospirosis rate in Ukraine',
+    lat: 48.45, lng: 23.3,
+    diseases: ['leptospirosis'],
+    category: ['endemic', 'surveillance'],
+    size: 22,
+    stats: [
+      { label: 'Mean rate 2018–2023', value: '3.42 /100,000', cls: 'high' },
+      { label: '2023 rate', value: '12.08 /100,000', cls: 'high' },
+      { label: '2023 cases', value: '150 of 433 national', cls: 'high' },
+      { label: 'Children rate (2023)', value: '2.08 /100,000', cls: 'med' },
+    ],
+    notes: 'Borders Romania, Hungary, Poland, Slovakia. 63% rural population. Highest river-network density in Ukraine — key driver. Received 350,000+ IDPs since Feb 2022. Home to EDI Lab at Zakarpattia CDC (MAT serogroup testing site) and Uzhhorod National University.',
+    source: 'Petakh et al. 2024 (Front. Public Health); Petakh et al. 2024 (Travel Med. Infect. Dis.)'
+  },
+  {
+    id: 'ivano_frankivsk',
+    name: 'Ivano-Frankivsk Oblast',
+    subtitle: 'High leptospirosis burden',
+    lat: 48.9, lng: 24.7,
+    diseases: ['leptospirosis'],
+    category: ['endemic'],
+    size: 14,
+    stats: [
+      { label: 'Mean rate 2018–2023', value: '1.48 /100,000', cls: 'high' },
+      { label: '2023 cases', value: '34', cls: 'med' },
+    ],
+    notes: 'High river-network density. Borders Zakarpattia and Lviv oblasts. Part of the western high-incidence leptospirosis cluster.',
+    source: 'Petakh et al. 2024'
+  },
+  {
+    id: 'mykolaiv',
+    name: 'Mykolayiv Oblast',
+    subtitle: 'Leptospirosis & tularemia overlap',
+    lat: 47.0, lng: 31.9,
+    diseases: ['leptospirosis', 'tularemia'],
+    category: ['endemic'],
+    size: 14,
+    stats: [
+      { label: 'Leptospirosis rate (mean)', value: '1.34 /100,000', cls: 'high' },
+      { label: 'Tularemia (PCR 2015–18)', value: '0.4% samples +ve', cls: 'low' },
+    ],
+    notes: 'Human tularemia case confirmed in Oleksandrivka (Voznesensk District). Historical 1997–98 tularemia outbreak of ~100 cases linked here and Odessa. Kakhovka Dam flood impact on southern areas.',
+    source: 'Petakh et al. 2024; Zlenko et al. 2020 (PMC7105997)'
+  },
+  {
+    id: 'kherson',
+    name: 'Kherson Oblast',
+    subtitle: 'Kakhovka Dam flood zone',
+    lat: 46.6, lng: 33.0,
+    diseases: ['leptospirosis', 'tularemia'],
+    category: ['endemic', 'outbreak'],
+    size: 15,
+    stats: [
+      { label: 'Leptospirosis rate (mean)', value: '1.29 /100,000', cls: 'high' },
+      { label: 'Post-dam flood risk', value: 'Elevated', cls: 'high' },
+    ],
+    notes: 'Kakhovka Dam destroyed 6 June 2023, flooding southern Kherson Oblast. Immediate spike in leptospirosis and tularemia risk due to water contamination, rodent displacement. Historical tularemia endemic focus (Hightower et al. 2014).',
+    source: 'Petakh et al. 2024; Petakh et al. Frontiers 2024'
+  },
+  {
+    id: 'khmelnytskyi',
+    name: 'Khmelnytskyi Oblast',
+    subtitle: 'Elevated leptospirosis region',
+    lat: 49.4, lng: 27.0,
+    diseases: ['leptospirosis'],
+    category: ['endemic'],
+    size: 12,
+    stats: [
+      { label: 'Mean rate 2018–2023', value: '1.20 /100,000', cls: 'high' },
+    ],
+    notes: 'Part of western Ukraine high-incidence leptospirosis cluster. River network density a contributing factor.',
+    source: 'Petakh et al. 2024'
+  },
+  {
+    id: 'kharkiv',
+    name: 'Kharkiv Oblast',
+    subtitle: 'Front-line oblast; tularemia endemic; hantavirus outbreak',
+    lat: 49.95, lng: 36.2,
+    diseases: ['leptospirosis', 'tularemia', 'hantavirus'],
+    category: ['outbreak', 'endemic'],
+    size: 18,
+    stats: [
+      { label: 'Leptospirosis rate (mean)', value: '0.04 /100,000 (lowest)', cls: 'low' },
+      { label: 'Air-raid alarm duration', value: '4,295 hrs (highest)', cls: 'high' },
+      { label: 'Tularemia PCR +ve (2015–18)', value: '23% of samples', cls: 'high' },
+      { label: 'Hantavirus outbreak', value: 'Dec 2023 near Kupyansk', cls: 'high' },
+    ],
+    notes: 'Paradox: lowest leptospirosis rate but highest conflict intensity and alarm hours. Significant tularemia endemic focus: 78/380 tick/rodent samples PCR+ve (2015–18). Hantavirus ("mouse fever") outbreak reported near Kupyansk in Dec 2023 affecting Russian forces.',
+    source: 'Petakh et al. 2024; Zlenko et al. 2020; Newsweek Dec 2023; GUR Dec 2023'
+  },
+  {
+    id: 'zaporizhzhia',
+    name: 'Zaporizhzhia Oblast',
+    subtitle: 'Front-line oblast; rodent infestations documented',
+    lat: 47.85, lng: 35.1,
+    diseases: ['leptospirosis', 'tularemia', 'hantavirus'],
+    category: ['endemic', 'outbreak'],
+    size: 16,
+    stats: [
+      { label: 'Leptospirosis rate (mean)', value: '0.15 /100,000', cls: 'low' },
+      { label: 'Air-raid alarm duration', value: '4,067 hrs (2nd highest)', cls: 'high' },
+      { label: 'Hantavirus (Akhmat unit)', value: 'Confirmed cases 2024–25', cls: 'high' },
+    ],
+    notes: 'Akhmat Battalion (Chechen forces) reported confirmed hantavirus cases near Zaporizhzhia. Rodent equipment damage documented by Ukrainian signalman here — "mice chewed everything: radios, repeaters, wires." Historical tularemia endemic focus.',
+    source: 'Kyiv Post 2025; CNN Jan 2024; Hightower et al. 2014'
+  },
+  {
+    id: 'donetsk',
+    name: 'Donetsk Oblast',
+    subtitle: 'Front-line trenches; rodent infestation documented',
+    lat: 48.0, lng: 37.8,
+    diseases: ['hantavirus', 'leptospirosis'],
+    category: ['outbreak'],
+    size: 16,
+    stats: [
+      { label: 'Rodent infestation', value: 'Documented (Bakhmut, Serebryan)', cls: 'high' },
+      { label: 'Equipment damage', value: '~1M UAH per dugout', cls: 'med' },
+    ],
+    notes: 'Serebryan Forest documented as rodent infestation site (Jan 2024). Mousetrap photos from Bakhmut trenches (Oct 2023). Primary front-line area: unharvested crops since 2022 drove massive rodent population explosions. High leptospirosis and hantavirus exposure risk for troops.',
+    source: 'CNN Jan 2024'
+  },
+  {
+    id: 'chernihiv',
+    name: 'Chernihiv Oblast',
+    subtitle: 'Tularemia endemic focus',
+    lat: 51.5, lng: 31.3,
+    diseases: ['tularemia'],
+    category: ['endemic'],
+    size: 12,
+    stats: [
+      { label: 'F. tularensis confirmed', value: 'Arthropods, rodents, water', cls: 'med' },
+    ],
+    notes: 'Named endemic oblast for F. tularensis in arthropods, rodents, water, and agricultural products (Jurtubaeva et al. 2022). Northern oblast; Russian forces entered early in invasion before withdrawal.',
+    source: 'Saunders et al. 2024; Jurtubaeva et al. 2022'
+  },
+  {
+    id: 'sumy',
+    name: 'Sumy Oblast',
+    subtitle: 'Tularemia endemic; low leptospirosis',
+    lat: 50.9, lng: 34.8,
+    diseases: ['tularemia', 'leptospirosis'],
+    category: ['endemic'],
+    size: 12,
+    stats: [
+      { label: 'Leptospirosis rate (mean)', value: '0.28 /100,000', cls: 'low' },
+      { label: 'F. tularensis', value: 'Endemic (confirmed)', cls: 'med' },
+    ],
+    notes: 'Named as tularemia endemic oblast (Jurtubaeva et al. 2022). Front-line oblast bordering Russia. Part of North regional group in leptospirosis geographic analysis.',
+    source: 'Saunders et al. 2024'
+  },
+  {
+    id: 'odesa',
+    name: 'Odesa Oblast',
+    subtitle: 'Historical tularemia outbreaks',
+    lat: 46.5, lng: 30.7,
+    diseases: ['tularemia'],
+    category: ['endemic'],
+    size: 12,
+    stats: [
+      { label: 'F. tularensis', value: 'Endemic (Chernihiv, Odesa, Sumy)', cls: 'med' },
+      { label: '1997–98 outbreak', value: '~100 human cases', cls: 'high' },
+    ],
+    notes: 'Major historical tularemia outbreak in 1997–98 connected to lagomorphs and rodents in woodland belts. Endemic tularemia foci confirmed in arthropods, rodents, and environmental samples.',
+    source: 'Jurtubaeva et al. 2022; Zlenko et al. 2020'
+  },
+  {
+    id: 'lviv',
+    name: 'Lviv Oblast',
+    subtitle: 'Tularemia foci; high humidity belt',
+    lat: 49.85, lng: 24.0,
+    diseases: ['tularemia', 'vector'],
+    category: ['endemic', 'surveillance'],
+    size: 11,
+    stats: [
+      { label: 'Tularemia enzootic sites', value: '69 localities, 14 districts', cls: 'med' },
+      { label: 'F. tularensis cultures', value: '200+ isolated (ticks 58%)', cls: 'med' },
+    ],
+    notes: '40+ years of tularemia monitoring. Borders Poland. High humidity (Lviv/Volyn peak). No human cases in recent years but enzootic circulation confirmed by serology in rodents.',
+    source: 'Velychko et al. 2016 (PMC5462245)'
+  },
+  {
+    id: 'dnipropetrovsk',
+    name: 'Dnipropetrovsk Oblast',
+    subtitle: 'Tularemia surveillance; low leptospirosis',
+    lat: 48.5, lng: 35.0,
+    diseases: ['tularemia', 'leptospirosis'],
+    category: ['endemic'],
+    size: 11,
+    stats: [
+      { label: 'Leptospirosis rate (mean)', value: '0.22 /100,000', cls: 'low' },
+      { label: 'Tularemia PCR +ve (2015–18)', value: '1.9% of samples', cls: 'low' },
+    ],
+    notes: 'PCR surveillance study 2015–18 covered this oblast alongside Kharkiv and Mykolayiv. Central Ukraine, part of Centre regional group.',
+    source: 'Zlenko et al. 2020 (PMC7105997)'
+  },
+  {
+    id: 'zhytomyr',
+    name: 'Zhytomyr Oblast',
+    subtitle: 'Low leptospirosis; North region',
+    lat: 50.3, lng: 28.7,
+    diseases: ['leptospirosis'],
+    category: ['endemic'],
+    size: 8,
+    stats: [
+      { label: 'Leptospirosis rate (mean)', value: '0.21 /100,000', cls: 'low' },
+    ],
+    notes: 'Part of North regional group. One of five lowest-rate oblasts nationally.',
+    source: 'Petakh et al. 2024'
+  },
+
+  // ── KEY EVENTS ──
+  {
+    id: 'kakhovka',
+    name: 'Kakhovka Dam',
+    subtitle: 'Destroyed 6 June 2023 — major disease risk event',
+    lat: 46.76, lng: 33.38,
+    diseases: ['event'],
+    category: ['outbreak', 'event'],
+    size: 16,
+    stats: [
+      { label: 'Event', value: 'Dam destroyed', cls: 'high' },
+      { label: 'Date', value: '6 June 2023', cls: 'med' },
+      { label: 'Impact', value: 'Flood; leptospirosis + tularemia spike', cls: 'high' },
+    ],
+    notes: 'Destruction caused widespread flooding in southern Kherson Oblast. WHO and researchers identified immediate elevated risk of leptospirosis and tularemia due to water contamination with rodent excreta and sewage. Contributed to the 3× spike in national leptospirosis cases in 2023.',
+    source: 'Petakh et al. 2024; Petakh et al. Frontiers 2024'
+  },
+  {
+    id: 'kupyansk',
+    name: 'Kupyansk',
+    subtitle: 'Hantavirus ("mouse fever") outbreak — Dec 2023',
+    lat: 49.71, lng: 37.62,
+    diseases: ['hantavirus'],
+    category: ['outbreak'],
+    size: 16,
+    stats: [
+      { label: 'Outbreak date', value: 'December 2023', cls: 'high' },
+      { label: 'Affected forces', value: 'Russian units (GUR report)', cls: 'high' },
+      { label: 'Impact', value: 'Reduced combat capability', cls: 'high' },
+    ],
+    notes: 'Ukraine\'s GUR reported hantavirus (HFRS/"mouse fever") outbreak in Russian military units near Kupyansk, Kharkiv Oblast. Symptoms: haemorrhagic eyes, fever, kidney failure, rashes. Russian command reportedly ignored complaints, assuming malingering.',
+    source: 'GUR Telegram Dec 2023; Newsweek Dec 2023; CNN Jan 2024'
+  },
+  {
+    id: 'bakhmut',
+    name: 'Bakhmut',
+    subtitle: 'Trench rodent infestation documented',
+    lat: 48.60, lng: 37.99,
+    diseases: ['hantavirus', 'leptospirosis'],
+    category: ['outbreak'],
+    size: 12,
+    stats: [
+      { label: 'Date', value: 'October 2023', cls: 'med' },
+      { label: 'Evidence', value: 'Media-documented mousetrap use', cls: 'med' },
+    ],
+    notes: 'Photographic media evidence of mousetrap use in trenches near Bakhmut (Oct 2023). Intense front-line combat area with prolonged positional warfare — conditions ideal for rodent proliferation.',
+    source: 'CNN Jan 2024'
+  },
+
+  // ── SURVEILLANCE / INSTITUTIONAL SITES ──
+  {
+    id: 'kyiv',
+    name: 'Kyiv',
+    subtitle: 'National Public Health Centre',
+    lat: 50.45, lng: 30.52,
+    diseases: ['vector'],
+    category: ['surveillance'],
+    size: 12,
+    stats: [
+      { label: 'Role', value: 'National surveillance hub', cls: 'med' },
+    ],
+    notes: 'Location of the Public Health Center of Ukraine (Ukrainian Centre for Disease Prevention and Control) — the primary national data source for all disease notification data cited in the reviewed literature.',
+    source: 'Multiple sources'
+  },
+  {
+    id: 'uzhhorod',
+    name: 'Uzhhorod',
+    subtitle: 'Regional CDC & diagnostic laboratory',
+    lat: 48.62, lng: 22.30,
+    diseases: ['leptospirosis'],
+    category: ['surveillance'],
+    size: 11,
+    stats: [
+      { label: 'Role', value: 'MAT serogroup testing (leptospirosis)', cls: 'med' },
+      { label: 'Institution', value: 'Zakarpattia CDC / Uzhhorod Nat. Univ.', cls: 'med' },
+    ],
+    notes: 'Primary laboratory for Leptospira MAT (microscopic agglutination test) serogroup identification in humans and rodents across Zakarpattia Oblast. Serogroups documented: Icterohaemorrhagiae, Pomona, Grippotyphosa, Hebdomadis, Canicola, Tarassovi.',
+    source: 'Petakh et al. 2025 (MDPI Microorganisms)'
+  },
+  {
+    id: 'ternopil',
+    name: 'Ternopil',
+    subtitle: 'Lead research institution',
+    lat: 49.56, lng: 25.60,
+    diseases: ['vector'],
+    category: ['surveillance'],
+    size: 10,
+    stats: [
+      { label: 'Institution', value: 'I. Horbachevsky Ternopil NMU', cls: 'med' },
+    ],
+    notes: 'I. Horbachevsky Ternopil National Medical University — lead institution for multiple leptospirosis and communicable disease surveillance studies cited throughout this review (Petakh, Tymchyk, Kamyshnyi research group).',
+    source: 'Multiple Petakh et al. papers'
+  },
+  {
+    id: 'kharkiv_inst',
+    name: 'Kharkiv (NSC-IECVM)',
+    subtitle: 'National veterinary epizootic institute',
+    lat: 49.97, lng: 36.35,
+    diseases: ['tularemia'],
+    category: ['surveillance'],
+    size: 10,
+    stats: [
+      { label: 'Institution', value: 'Nat. Sci. Center — Inst. Exp. & Clin. Vet. Med.', cls: 'med' },
+    ],
+    notes: 'Coordinating body for tularemia epizootic data in Ukraine. In direct communication with Saunders et al. (2024) for the tularemia outbreak risk assessment. Reported that early 2023 conditions were unfavourable for rodents due to flooding of burrows.',
+    source: 'Saunders et al. 2024'
+  },
+
+  // ── CROSS-BORDER / NEIGHBOURING ──
+  {
+    id: 'poland',
+    name: 'Poland',
+    subtitle: 'Major refugee destination; Dirofilaria importation confirmed',
+    lat: 51.9, lng: 19.1,
+    diseases: ['vector'],
+    category: ['crossborder'],
+    size: 14,
+    stats: [
+      { label: 'Leptospirosis rate', value: '0.10 /100,000 (2010–21)', cls: 'low' },
+      { label: 'Dirofilaria repens', value: 'Newly endemic; rising cases', cls: 'med' },
+      { label: 'D. immitis', value: 'Not endemic (pre-conflict)', cls: 'low' },
+      { label: 'Refugees received', value: '1.1M+ (2022)', cls: 'med' },
+    ],
+    notes: 'Dogs evacuated from Ukraine (including eastern front-line areas) tested positive for Dirofilaria spp. and Hepatozoon canis at shelters in central Poland. Both mosquito-borne pathogens (D. repens zoonotic; D. immitis previously absent). Study sites: animal shelters, central Poland (July 2022).',
+    source: 'Tolkacz et al. 2023 (Parasites & Vectors)'
+  },
+  {
+    id: 'slovakia',
+    name: 'Slovakia',
+    subtitle: 'Borders Zakarpattia; cross-border risk',
+    lat: 48.7, lng: 19.7,
+    diseases: ['leptospirosis'],
+    category: ['crossborder'],
+    size: 10,
+    stats: [
+      { label: 'Leptospirosis rate', value: '0.15 /100,000', cls: 'low' },
+      { label: 'Risk from Zakarpattia', value: 'Elevated (12.08 rate at border)', cls: 'high' },
+    ],
+    notes: 'Shares border with Zakarpattia Oblast. Leptospirosis rate far below Zakarpattia border region. IDP flows through Slovakia.',
+    source: 'Petakh et al. 2024'
+  },
+  {
+    id: 'romania',
+    name: 'Romania',
+    subtitle: 'Borders Zakarpattia; cross-border risk',
+    lat: 45.9, lng: 24.9,
+    diseases: ['leptospirosis'],
+    category: ['crossborder'],
+    size: 10,
+    stats: [
+      { label: 'Leptospirosis rate', value: '0.34 /100,000', cls: 'low' },
+    ],
+    notes: 'Shares border with Zakarpattia Oblast. Of Ukraine\'s bordering EU states, Romania has the highest pre-existing leptospirosis rate (0.34 vs 0.10–0.15 for others), but still well below Zakarpattia\'s 12.08.',
+    source: 'Petakh et al. 2024'
+  },
+  {
+    id: 'hungary',
+    name: 'Hungary',
+    subtitle: 'Borders Zakarpattia',
+    lat: 47.2, lng: 19.5,
+    diseases: ['leptospirosis'],
+    category: ['crossborder'],
+    size: 9,
+    stats: [
+      { label: 'Risk', value: 'Cross-border IDP flows', cls: 'low' },
+    ],
+    notes: 'Shares border with Zakarpattia Oblast. IDP movement through Hungary documented.',
+    source: 'Petakh et al. 2023'
+  },
+];
+
+// ── Marker creation ──
+function makeIcon(diseases, size, pulse) {
+  const color = COLORS[diseases[0]] || '#aaa';
+  const s = size;
+  const html = `<div style="
+    width:${s}px; height:${s}px; border-radius:50%;
+    background:${color}; border:2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 ${s/2}px ${color}88;
+    display:flex; align-items:center; justify-content:center;
+    ${pulse ? 'animation: pulse 2s infinite;' : ''}
+  ">
+  ${diseases.length > 1 ? `<span style="font-size:9px;color:#fff;font-weight:700">${diseases.length}</span>` : ''}
+  </div>`;
+  return L.divIcon({ className: '', html, iconSize: [s, s], iconAnchor: [s/2, s/2] });
+}
+
+// Store markers
+let allMarkers = [];
+
+locations.forEach(loc => {
+  const isPulse = loc.category.includes('outbreak');
+  const icon = makeIcon(loc.diseases, loc.size, isPulse);
+  const marker = L.marker([loc.lat, loc.lng], { icon });
+
+  marker.on('click', () => showPanel(loc));
+  marker.locData = loc;
+  marker.addTo(map);
+  allMarkers.push(marker);
+});
+
+// ── Panel ──
+function showPanel(loc) {
+  document.getElementById('panel-title').textContent = loc.name;
+  document.getElementById('panel-subtitle').textContent = loc.subtitle;
+
+  let html = '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px">';
+  loc.diseases.forEach(d => {
+    html += `<span class="disease-tag" style="${TAG_STYLES[d]}">${d}</span>`;
+  });
+  html += '</div>';
+
+  if (loc.stats.length) {
+    html += '<div style="border-top:1px solid #1a3048;border-bottom:1px solid #1a3048;margin-bottom:8px">';
+    loc.stats.forEach(s => {
+      html += `<div class="stat-row"><span class="stat-label">${s.label}</span><span class="stat-value ${s.cls}">${s.value}</span></div>`;
+    });
+    html += '</div>';
+  }
+
+  if (loc.notes) html += `<p class="note-text">${loc.notes}</p>`;
+  if (loc.source) html += `<p class="source-tag">Source: ${loc.source}</p>`;
+
+  document.getElementById('panel-body').innerHTML = html;
+  document.getElementById('panel').classList.add('visible');
+  map.panTo([loc.lat, loc.lng], { animate: true });
+}
+
+document.getElementById('panel-close').onclick = () => {
+  document.getElementById('panel').classList.remove('visible');
+};
+
+// ── Filters ──
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    allMarkers.forEach(m => {
+      const cats = m.locData.category;
+      const show = filter === 'all' || cats.includes(filter);
+      if (show) { if (!map.hasLayer(m)) m.addTo(map); }
+      else { if (map.hasLayer(m)) map.removeLayer(m); }
+    });
+  };
+});
+
+// ── Legend toggles ──
+document.querySelectorAll('.legend-item').forEach(item => {
+  item.onclick = () => {
+    const disease = item.dataset.disease;
+    item.classList.toggle('active');
+    const active = item.classList.contains('active');
+    allMarkers.forEach(m => {
+      if (m.locData.diseases.includes(disease)) {
+        if (active) { if (!map.hasLayer(m)) m.addTo(map); }
+        else { if (map.hasLayer(m)) map.removeLayer(m); }
+      }
+    });
+  };
+});
+
+// Size legend
+const sizeLegend = L.control({ position: 'bottomleft' });
+sizeLegend.onAdd = () => {
+  const div = L.DomUtil.create('div');
+  div.style.cssText = 'background:rgba(18,32,46,0.9);border:1px solid #2a3f52;border-radius:8px;padding:10px 14px;font-size:10px;color:#7a9bb5;line-height:1.8';
+  div.innerHTML = `
+    <div style="font-weight:700;color:#a0bcd0;margin-bottom:6px">MARKER SIZE</div>
+    <div>● Large — high incidence / active outbreak</div>
+    <div>· Small — endemic / low activity</div>
+    <div style="margin-top:8px;font-weight:700;color:#a0bcd0">CATEGORY</div>
+    <div><span style="color:#e05050">■</span> Leptospirosis &nbsp; <span style="color:#e0a030">■</span> Tularemia</div>
+    <div><span style="color:#9b59f5">■</span> Hantavirus &nbsp; <span style="color:#20c0a0">■</span> Vector/Other</div>
+    <div><span style="color:#f5a623">■</span> Key Event &nbsp; <span style="color:#fff;opacity:0.5;font-size:8px">Numbers = multi-disease sites</span></div>
+    <div style="margin-top:8px;color:#4a6f8a;font-size:9px">Pulsing = active/recent outbreak</div>
+  `;
+  return div;
+};
+sizeLegend.addTo(map);
+</script>
+</body>
+</html>

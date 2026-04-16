@@ -82,6 +82,40 @@
   .leaflet-control-attribution { background: rgba(10,20,30,0.7) !important; color: #3a5a7a !important; font-size: 9px; }
   .leaflet-control-attribution a { color: #4a7a9a !important; }
 
+  /* Layer control — dark theme */
+  .leaflet-control-layers {
+    background: #12202e !important;
+    border: 1px solid #2a3f52 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5) !important;
+  }
+  .leaflet-control-layers-toggle {
+    background-color: #1a2a3a !important;
+    border: none !important;
+    width: 34px !important; height: 34px !important;
+  }
+  .leaflet-control-layers-expanded {
+    padding: 8px 12px !important;
+    min-width: 180px;
+  }
+  .leaflet-control-layers label {
+    color: #a0bcd0 !important;
+    font-size: 11px !important;
+    font-family: 'Segoe UI', Arial, sans-serif !important;
+    display: flex; align-items: center; gap: 6px;
+    padding: 3px 0;
+    cursor: pointer;
+  }
+  .leaflet-control-layers label:hover { color: #c8e0f0 !important; }
+  .leaflet-control-layers-separator { border-color: #2a3f52 !important; margin: 6px 0 !important; }
+  .leaflet-control-layers-base span, .leaflet-control-layers-overlays span {
+    margin-left: 4px;
+  }
+  .leaflet-control-layers input[type=radio],
+  .leaflet-control-layers input[type=checkbox] {
+    accent-color: #4a8fba;
+  }
+
   /* Pulse animation for active outbreaks */
   @keyframes pulse {
     0% { transform: scale(1); opacity: 1; }
@@ -157,11 +191,45 @@ const map = L.map('map', {
   maxZoom: 10
 });
 
-// Dark tile layer
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png', {
-  attribution: '© OpenStreetMap © CARTO',
-  subdomains: 'abcd',
-  maxZoom: 19
+// ── Basemap layers ───────────────────────────────────────────────────────
+
+const basemaps = {
+
+  "🌑 Dark (default)": L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png',
+    { attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>', subdomains: 'abcd', maxZoom: 19 }
+  ),
+
+  "🗺️ Political / Boundaries": L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    { attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>', subdomains: 'abcd', maxZoom: 19 }
+  ),
+
+  "🛰️ Satellite": L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    { attribution: '© <a href="https://www.esri.com/">Esri</a>, Maxar, Earthstar Geographics', maxZoom: 19 }
+  ),
+
+  "🏔️ Terrain": L.tileLayer(
+    'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    { attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://opentopomap.org/">OpenTopoMap</a>', subdomains: 'abc', maxZoom: 17 }
+  ),
+
+  "📋 OSM Standard": L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    { attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', subdomains: 'abc', maxZoom: 19 }
+  )
+
+};
+
+// Add default basemap
+basemaps["🌑 Dark (default)"].addTo(map);
+
+// Layer control (basemaps only — overlays added later after markers built)
+// Store reference so we can add overlay group after markers are created
+const layerControl = L.control.layers(basemaps, {}, {
+  position: 'topright',
+  collapsed: true
 }).addTo(map);
 
 // Color scheme
@@ -595,9 +663,13 @@ locations.forEach(loc => {
 
   marker.on('click', () => showPanel(loc));
   marker.locData = loc;
-  marker.addTo(map);
+  // markers added to map via markerGroup below
   allMarkers.push(marker);
 });
+
+// ── Marker overlay group (for layer control toggle) ──────────────────────
+const markerGroup = L.layerGroup(allMarkers).addTo(map);
+layerControl.addOverlay(markerGroup, "📍 Disease Locations");
 
 // ── Panel ──
 function showPanel(loc) {
@@ -639,8 +711,8 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
     allMarkers.forEach(m => {
       const cats = m.locData.category;
       const show = filter === 'all' || cats.includes(filter);
-      if (show) { if (!map.hasLayer(m)) m.addTo(map); }
-      else { if (map.hasLayer(m)) map.removeLayer(m); }
+      if (show) { if (!markerGroup.hasLayer(m)) markerGroup.addLayer(m); }
+      else { if (markerGroup.hasLayer(m)) markerGroup.removeLayer(m); }
     });
   };
 });
@@ -653,8 +725,8 @@ document.querySelectorAll('.legend-item').forEach(item => {
     const active = item.classList.contains('active');
     allMarkers.forEach(m => {
       if (m.locData.diseases.includes(disease)) {
-        if (active) { if (!map.hasLayer(m)) m.addTo(map); }
-        else { if (map.hasLayer(m)) map.removeLayer(m); }
+        if (active) { if (!markerGroup.hasLayer(m)) markerGroup.addLayer(m); }
+        else { if (markerGroup.hasLayer(m)) markerGroup.removeLayer(m); }
       }
     });
   };

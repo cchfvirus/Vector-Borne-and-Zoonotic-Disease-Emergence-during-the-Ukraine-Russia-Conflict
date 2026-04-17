@@ -165,7 +165,7 @@
 <div id="header">
   <div>
     <h1>Rodent &amp; Vector-Borne Zoonoses — Ukraine–Russia Conflict (2022–2026)</h1>
-    <p>Geographic data synthesised from peer-reviewed literature &amp; surveillance reports</p>
+    <p>Geographic data synthesised from peer-reviewed literature &amp; surveillance reports; CCHF shown as admin-level proxy evidence where precise case coordinates are unavailable</p>
   </div>
   <div id="legend">
     <div class="legend-item active" data-disease="leptospirosis">
@@ -256,6 +256,7 @@
     <div class="src-section-title">CCHF &amp; Hyalomma Ticks</div>
     <div class="src-entry">Celina SS, Černý J, Samy AM (2023). Mapping the potential distribution of <em>Hyalomma marginatum</em> (principal CCHF vector) in the Old World. <em>PLoS Neglected Tropical Diseases</em> 17(11):e0010855. <a href="https://doi.org/10.1371/journal.pntd.0010855" target="_blank">doi:10.1371/journal.pntd.0010855</a>. PMID:38011221.</div>
     <div class="src-entry">Parvage MM, Baron JN, Semenza JC, Omazic A (2025). Emergence and spread of <em>Hyalomma</em> ticks and Crimean-Congo haemorrhagic fever in Europe: a systematic review. <em>Parasites &amp; Vectors</em> 18(1):436. <a href="https://doi.org/10.1186/s13071-025-07104-3" target="_blank">doi:10.1186/s13071-025-07104-3</a>. PMID:41152939.</div>
+    <div class="src-entry">CCHF map symbols are shown as <strong>admin-area proxy points</strong> where the accepted literature supports historical presence, serological evidence, or ecological suitability in southern Ukraine. Points represent oblast/region centroids or broad endemic zones, not precise case locations.</div>
   </div>
 
   <div class="src-section">
@@ -750,6 +751,60 @@ const locations = [
     ],
     notes: 'Shares border with Zakarpattia Oblast. IDP movement through Hungary documented.',
     source: 'Petakh et al. 2023'
+  },
+
+
+  // ── CCHF / HYALOMMA (admin-level proxy points; low-precision) ─────────
+  {
+    id: 'crimea_cchf_proxy',
+    name: 'Crimea (CCHF Historical Focus)',
+    subtitle: 'Admin-area proxy point — historical presence and vector suitability',
+    lat: 45.30, lng: 34.40,
+    diseases: ['vector'],
+    category: ['endemic'],
+    size: 12,
+    stats: [
+      { label: 'Evidence type', value: 'Historical focus / ecological suitability', cls: 'med' },
+      { label: 'Pathogen', value: 'Crimean-Congo haemorrhagic fever virus', cls: 'high' },
+      { label: 'Vector basis', value: 'Hyalomma marginatum range', cls: 'med' },
+      { label: 'Precision', value: 'Regional centroid only', cls: 'low' },
+    ],
+    notes: 'This point is plotted as a low-precision regional proxy for Crimea, where the historic Crimea–southern Ukraine ecological zone is repeatedly referenced in the accepted CCHF literature. It should be interpreted as evidence of historical presence and ecological plausibility rather than a confirmed outbreak coordinate.',
+    source: 'Celina SS, Cerny J, Samy AM. 2023. PLoS Negl Trop Dis 17(11):e0010855; Parvage MM et al. 2025. Parasit Vectors 18:436'
+  },
+  {
+    id: 'kherson_cchf_proxy',
+    name: 'Kherson Oblast (CCHF Proxy)',
+    subtitle: 'Admin-area proxy point — southern steppe suitability',
+    lat: 46.64, lng: 32.62,
+    diseases: ['vector'],
+    category: ['endemic'],
+    size: 11,
+    stats: [
+      { label: 'Evidence type', value: 'Ecological suitability', cls: 'med' },
+      { label: 'Landscape', value: 'Southern steppe / Black Sea corridor', cls: 'med' },
+      { label: 'Vector basis', value: 'Hyalomma-compatible habitat', cls: 'med' },
+      { label: 'Precision', value: 'Oblast centroid only', cls: 'low' },
+    ],
+    notes: 'Kherson is mapped as an oblast-centroid proxy because accepted CCHF studies identify southern Ukraine as the most plausible zone for Hyalomma establishment and CCHF risk. The marker represents admin-level ecological plausibility, not a geocoded human case.',
+    source: 'Celina SS, Cerny J, Samy AM. 2023. PLoS Negl Trop Dis 17(11):e0010855; Parvage MM et al. 2025. Parasit Vectors 18:436'
+  },
+  {
+    id: 'zaporizhzhia_cchf_proxy',
+    name: 'Zaporizhzhia Oblast (CCHF Proxy)',
+    subtitle: 'Admin-area proxy point — southern/eastern steppe interface',
+    lat: 47.84, lng: 35.14,
+    diseases: ['vector'],
+    category: ['endemic'],
+    size: 11,
+    stats: [
+      { label: 'Evidence type', value: 'Ecological suitability', cls: 'med' },
+      { label: 'Region type', value: 'Steppe transition zone', cls: 'med' },
+      { label: 'Use in review', value: 'Proxy for CCHF geographic signal', cls: 'low' },
+      { label: 'Precision', value: 'Oblast centroid only', cls: 'low' },
+    ],
+    notes: 'Zaporizhzhia is included as a low-precision proxy for the southern/eastern steppe belt where Hyalomma-based CCHF risk is biologically plausible in the accepted literature. This symbol is intended to show inferred geographic relevance only.',
+    source: 'Celina SS, Cerny J, Samy AM. 2023. PLoS Negl Trop Dis 17(11):e0010855; Parvage MM et al. 2025. Parasit Vectors 18:436'
   },
 
   // ── NEW: Lyme disease / Borrelia miyamotoi ──────────────────────────────

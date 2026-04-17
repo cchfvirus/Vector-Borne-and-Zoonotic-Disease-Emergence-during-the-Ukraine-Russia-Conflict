@@ -62,6 +62,54 @@
   .note-text { font-size: 10px; color: #5a8aaa; line-height: 1.5; margin-top: 8px; }
   .source-tag { font-size: 9px; color: #3a6080; margin-top: 6px; font-style: italic; }
 
+  /* Sources panel */
+  #sources-btn {
+    position: absolute; bottom: 40px; right: 12px; z-index: 1001;
+    background: #1a3448; border: 1px solid #2a4f6a; border-radius: 6px;
+    color: #a0bcd0; font-size: 11px; font-family: 'Segoe UI', Arial, sans-serif;
+    padding: 6px 12px; cursor: pointer; transition: all 0.2s;
+  }
+  #sources-btn:hover { background: #1e4060; color: #c8e0f0; border-color: #4a8fba; }
+
+  #sources-panel {
+    position: absolute; bottom: 76px; right: 12px; z-index: 1001;
+    width: 420px; max-height: 480px; overflow-y: auto;
+    background: #12202e; border: 1px solid #2a3f52; border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    display: none; padding: 14px 16px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  #sources-panel.visible { display: block; }
+  #sources-panel h3 {
+    font-size: 12px; font-weight: 700; color: #c8e0f0;
+    margin: 0 0 10px 0; padding-bottom: 6px;
+    border-bottom: 1px solid #2a3f52; letter-spacing: 0.3px;
+  }
+  #sources-panel .src-section { margin-bottom: 12px; }
+  #sources-panel .src-section-title {
+    font-size: 10px; font-weight: 700; color: #4a8fba;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 5px;
+  }
+  #sources-panel .src-entry {
+    font-size: 10px; color: #8ab4cc; line-height: 1.6;
+    padding: 3px 0 3px 10px; border-left: 2px solid #1e3a52;
+    margin-bottom: 3px;
+  }
+  #sources-panel .src-entry a {
+    color: #5a9fcc; text-decoration: none;
+  }
+  #sources-panel .src-entry a:hover { text-decoration: underline; }
+  #sources-panel .src-note {
+    font-size: 9px; color: #3a6080; font-style: italic;
+    margin-top: 10px; padding-top: 8px; border-top: 1px solid #1a3048;
+  }
+  #sources-panel .src-close {
+    float: right; background: none; border: none;
+    color: #5a7a9a; cursor: pointer; font-size: 14px; margin-top: -2px;
+  }
+  #sources-panel .src-close:hover { color: #c8e0f0; }
+
   /* Leaflet overrides */
   .leaflet-container { background: #e8e0d8; }  /* neutral for light basemap */
   .leaflet-control-zoom a { background: #1a2a3a; color: #7a9bb5; border-color: #2a3f52; }
@@ -152,6 +200,64 @@
     <button id="panel-close">✕</button>
   </div>
   <div id="panel-body"></div>
+</div>
+
+<!-- Sources panel -->
+<button id="sources-btn" onclick="document.getElementById('sources-panel').classList.toggle('visible')">
+  📚 Data Sources
+</button>
+
+<div id="sources-panel">
+  <h3>
+    <button class="src-close" onclick="document.getElementById('sources-panel').classList.remove('visible')">✕</button>
+    Map Data Sources
+  </h3>
+
+  <div class="src-section">
+    <div class="src-section-title">Leptospirosis Surveillance</div>
+    <div class="src-entry">Petakh P, Tymchyk V, Kamyshnyi O (2024). Surveillance of human leptospirosis infections in Ukraine between 2018 and 2023. <em>Frontiers in Public Health</em> 12:1394781. <a href="https://doi.org/10.3389/fpubh.2024.1394781" target="_blank">doi:10.3389/fpubh.2024.1394781</a></div>
+    <div class="src-entry">Petakh P, Tymchyk V, Kamyshnyi O (2024). Communicable diseases in Ukraine 2018–2023: impact of COVID-19 and war. <em>Travel Medicine and Infectious Disease</em> 60:102733.</div>
+    <div class="src-entry">Petakh P, Tymchyk V, Kamyshnyi O (2024). Geographical factors and air raid alarms influence leptospirosis epidemiology in Ukraine (2018–2023). <em>One Health</em> 19:100878. PMC11639380.</div>
+    <div class="src-entry">Petakh P, Kamyshnyi A, Tymchyk V, Armitage R (2023). Infectious diseases during the Russian–Ukrainian war — Transcarpathian region as a marker of epidemic danger on the EU border. <em>Public Health Practice</em> 6:100397. <a href="https://doi.org/10.1016/j.puhip.2023.100397" target="_blank">doi:10.1016/j.puhip.2023.100397</a></div>
+    <div class="src-entry">Petakh P, Nykyforuk A (2025). Serogroup distribution of <em>Leptospira</em> among humans and rodents in Zakarpattia Oblast, Ukraine (2018–2023). <em>Microorganisms</em> 13(3):614. <a href="https://doi.org/10.3390/microorganisms13030614" target="_blank">doi:10.3390/microorganisms13030614</a></div>
+    <div class="src-entry">Markovych O, Tymchyk V, Kolesnikova I (2019). Leptospirosis in Zakarpattia Oblast (2005–2015). <em>Vector-Borne and Zoonotic Diseases</em> 19:333–340. <a href="https://doi.org/10.1089/vbz.2018.2356" target="_blank">doi:10.1089/vbz.2018.2356</a></div>
+  </div>
+
+  <div class="src-section">
+    <div class="src-section-title">Tularemia</div>
+    <div class="src-entry">Saunders DL, Pierson BC, Gelhaus HC (2024). Considerations for prevention of and emergency response to tularemia outbreaks in Ukraine. <em>Frontiers in Bacteriology</em> 3:1364708. <a href="https://doi.org/10.3389/fbrio.2024.1364708" target="_blank">doi:10.3389/fbrio.2024.1364708</a></div>
+    <div class="src-entry">Hightower J, Kracalik IT, Vydayko N et al. (2014). Historical distribution and host-vector diversity of <em>Francisella tularensis</em> in Ukraine. <em>Parasites &amp; Vectors</em> 7:453. <a href="https://doi.org/10.1186/s13071-014-0453-2" target="_blank">doi:10.1186/s13071-014-0453-2</a></div>
+    <div class="src-entry">Zlenko DK et al. (2020). PCR prevalence study of <em>Francisella tularensis</em> in Kharkiv, Dnipropetrovsk, and Mykolaiv oblasts, 2015–2018. PMC7105997.</div>
+    <div class="src-entry">Jurtubaeva G et al. (2022). Epidemic process of tularemia in the world and in the south of Ukraine. <em>Journal of Education, Health and Sport</em> 12(1):503–513. <a href="https://doi.org/10.12775/JEHS.2022.12.01.042" target="_blank">doi:10.12775/JEHS.2022.12.01.042</a></div>
+    <div class="src-entry">Velychko O, Vasiunets L, Semenyshyn O, Hasiy L (2016). Activity of natural tularemia foci in West Ukraine. <em>Proc ISDS Annual Conference</em>. PMC5462245.</div>
+  </div>
+
+  <div class="src-section">
+    <div class="src-section-title">Hantavirus (HFRS)</div>
+    <div class="src-entry">Mustonen J, Henttonen H, Vaheri A (2024). Hantavirus infections among military forces. <em>Military Medicine</em> 189(3–4):551–555. <a href="https://doi.org/10.1093/milmed/usad261" target="_blank">doi:10.1093/milmed/usad261</a></div>
+  </div>
+
+  <div class="src-section">
+    <div class="src-section-title">Vector-Borne Parasites (Cross-border)</div>
+    <div class="src-entry">Tolkacz K, Kretschmer M, Nowak S, Myslajek RW et al. (2023). Vector-borne parasites in dogs from Ukraine translocated to Poland following Russian invasion in 2022. <em>Parasites &amp; Vectors</em> 16:415. <a href="https://doi.org/10.1186/s13071-023-06042-2" target="_blank">doi:10.1186/s13071-023-06042-2</a></div>
+  </div>
+
+  <div class="src-section">
+    <div class="src-section-title">Disease Surveillance &amp; Conflict Context</div>
+    <div class="src-entry">Kannan A, Chen R, Akhtar Z et al. (2024). Use of open-source epidemic intelligence for infectious disease outbreaks, Ukraine, 2022. <em>Emerging Infectious Diseases</em> 30(9):1865–1871. <a href="https://doi.org/10.3201/eid3009.240082" target="_blank">doi:10.3201/eid3009.240082</a></div>
+    <div class="src-entry">Roborgh S, Coutts AP, Chellew P et al. (2022). Conflict in Ukraine undermines an already challenged health system. <em>Lancet</em> 399:1365–1367. <a href="https://doi.org/10.1016/S0140-6736(22)00485-8" target="_blank">doi:10.1016/S0140-6736(22)00485-8</a></div>
+    <div class="src-entry">World Health Organization (2022). Ukraine Public Health Situation Analysis — long-form (July 2022 update). <a href="https://reliefweb.int/report/ukraine/ukraine-public-health-situation-analysis-phsa-long-form-last-update-july-2022-enuk" target="_blank">reliefweb.int</a></div>
+  </div>
+
+  <div class="src-section">
+    <div class="src-section-title">Occupied Territory Layer</div>
+    <div class="src-entry">Geometry source: uploaded GeoJSON dataset representing Russian-occupied territory of Ukraine. Coordinate precision: 5 decimal places (~1 m). Properties stripped; geometry only retained.</div>
+  </div>
+
+  <div class="src-note">
+    All peer-reviewed sources cited in Petakh et al. (2024) and the companion literature review:<br>
+    <em>Pathogens in the Trenches: The Resurgence of Vector-Borne and Zoonotic Threats during the Ukraine–Russia Conflict, 2022–2026</em>
+  </div>
 </div>
 
 <script>

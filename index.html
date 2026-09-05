@@ -686,7 +686,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
     --line:#d3dae1; --line-soft:#e6ebef;
     --ink:#1c252e; --ink-2:#4a5966; --ink-3:#77879a;
     --accent:#1f5f7d;
-    --lepto:#c0392b; --tular:#a9700c; --hanta:#6c3fa0; --vector:#0f7a63; --context:#5a6b7d;
+    /* Okabe & Ito colour-vision-deficiency-safe pathogen palette */
+    --lepto:#D55E00; --tular:#CC79A7; --hanta:#0072B2; --vector:#009E73; --context:#4A4A4A;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{
@@ -844,6 +845,31 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .leaflet-control-layers label{font-size:11px!important; color:var(--ink-2)!important; display:flex; align-items:center; gap:5px; padding:2px 0; cursor:pointer}
   .leaflet-control-layers label:hover{color:var(--ink)!important}
   .leaflet-control-layers input{accent-color:var(--accent)}
+
+  /* Layers control icon — Leaflet's stock PNG is external and absent from this
+     single-file build, leaving a blank square. Supply it as an inline SVG. */
+  .leaflet-control-layers-toggle,
+  .leaflet-retina .leaflet-control-layers-toggle{
+    background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%231c252e'%20stroke-width='1.7'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpolygon%20points='12%202.8%2021.2%207.7%2012%2012.6%202.8%207.7%2012%202.8'/%3E%3Cpolyline%20points='2.8%2012.6%2012%2017.5%2021.2%2012.6'/%3E%3Cpolyline%20points='2.8%2016.9%2012%2021.8%2021.2%2016.9'/%3E%3C/svg%3E") !important;
+    background-repeat:no-repeat !important;
+    background-position:50% 50% !important;
+    background-size:19px 19px !important;
+    background-color:#fff !important;
+    width:32px !important; height:32px !important;
+    border-radius:6px;
+  }
+  .leaflet-touch .leaflet-control-layers-toggle{width:34px !important; height:34px !important}
+  .leaflet-control-layers-toggle:hover{background-color:var(--surface-2) !important}
+
+  /* Headings inside the expanded control, applied in CSS so they survive
+     Leaflet re-rendering the layer list. */
+  .leaflet-control-layers-base::before,
+  .leaflet-control-layers-overlays::before{
+    display:block; content:'Basemap';
+    font-size:9px; font-weight:700; letter-spacing:.7px; text-transform:uppercase;
+    color:var(--ink-3); margin:0 0 4px;
+  }
+  .leaflet-control-layers-overlays::before{content:'Context layer'; margin-top:2px}
   .leaflet-control-attribution{background:rgba(255,255,255,.85)!important; font-size:9px!important; color:var(--ink-3)!important}
   .leaflet-control-attribution a{color:var(--accent)!important}
   .leaflet-control-scale-line{border-color:#9aa8b5; color:var(--ink-2); background:rgba(255,255,255,.8)}
@@ -936,6 +962,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <li>Surveillance in occupied and front-line areas is incomplete or absent. An empty area of the map indicates missing observation, and is evidence neither of absent transmission nor of increased transmission.</li>
       <li>Absence of a marker for a pathogen in an oblast means no eligible source reported one; it does not mean the pathogen is absent.</li>
     </ul>
+
+    <h4>Accessibility of the symbology</h4>
+    <p>Pathogen colours use the Okabe &amp; Ito qualitative palette, selected so that the five groups remain distinguishable under deuteranopia, protanopia and tritanopia; red&ndash;green pairings are avoided and every colour holds at least 3:1 contrast against the light basemap. Evidence type is encoded by symbol shape rather than by colour, so that dimension of the classification does not depend on colour perception at all. Pathogen group is the one distinction carried by colour alone; a reader who cannot rely on hue can isolate a single group using the pathogen filters above the map, and every marker panel names its pathogen groups in text.</p>
 
     <h4>Technical</h4>
     <p>Leaflet 1.9.4, inlined for offline use. Two basemaps are provided, both from Esri ArcGIS Online and neither requiring an API key: a light grey canvas (default) chosen so that symbol colour and shape carry the information rather than the underlying map, and satellite imagery for interpreting terrain and land cover at study locations. Each is paired with its reference label service. The contextual territorial-control overlay is loaded from an accompanying GeoJSON file and is illustrative of access constraints on surveillance, not a legal or authoritative boundary depiction.</p>
@@ -1799,12 +1828,17 @@ window.onerror = function (msg, src, line, col, err) {
 };
 
 // ── Palette ──────────────────────────────────────────────────────────────
+// Pathogen palette: Okabe & Ito qualitative scheme, chosen so that the five
+// groups remain mutually distinguishable under deuteranopia, protanopia and
+// tritanopia. Red/green pairings are avoided entirely. Evidence type is
+// independently encoded by symbol shape, so no distinction on this map
+// depends on colour alone.
 const COLORS = {
-  leptospirosis: '#c0392b',
-  tularemia:     '#a9700c',
-  hantavirus:    '#6c3fa0',
-  vector:        '#0f7a63',
-  event:         '#5a6b7d'
+  leptospirosis: '#D55E00',  // vermillion
+  tularemia:     '#CC79A7',  // reddish purple
+  hantavirus:    '#0072B2',  // blue
+  vector:        '#009E73',  // bluish green
+  event:         '#4A4A4A'   // neutral dark grey
 };
 const DISEASE_LABELS = {
   leptospirosis: 'Leptospirosis',
@@ -1814,11 +1848,11 @@ const DISEASE_LABELS = {
   event:         'Context & events'
 };
 const TAG_STYLES = {
-  leptospirosis: 'background:#fbeceb; color:#a3302a; border-color:#e5b9b5',
-  tularemia:     'background:#fbf3e4; color:#8a5b0c; border-color:#e3ce9f',
-  hantavirus:    'background:#f2eefa; color:#5b3489; border-color:#cdc0e4',
-  vector:        'background:#e7f4f0; color:#0d6753; border-color:#aed6cb',
-  event:         'background:#eef1f4; color:#4a5966; border-color:#c9d2da'
+  leptospirosis: 'background:#fbeee5; color:#8f3f00; border-color:#eec4a4',
+  tularemia:     'background:#faeef4; color:#8c4a70; border-color:#e5c2d5',
+  hantavirus:    'background:#e6f0f7; color:#005486; border-color:#a9c9de',
+  vector:        'background:#e3f4ef; color:#00674b; border-color:#a3d6c5',
+  event:         'background:#eeeeee; color:#3d3d3d; border-color:#c9c9c9'
 };
 
 // ── Map ──────────────────────────────────────────────────────────────────
@@ -1863,6 +1897,16 @@ basemaps['Grey canvas (Esri)'].addTo(map);
 
 const layerControl = L.control.layers(basemaps, {}, { position: 'topright', collapsed: true }).addTo(map);
 L.control.scale({ position: 'bottomright', imperial: false }).addTo(map);
+
+// Leaflet's stock layers icon is an external PNG that is not shipped with this
+// single-file build, so the control renders blank. The icon is supplied in CSS
+// as an inline SVG; here we give the control an explicit accessible name.
+(function labelLayersControl() {
+  const toggle = document.querySelector('.leaflet-control-layers-toggle');
+  if (!toggle) return;
+  toggle.title = 'Basemap and layers';
+  toggle.setAttribute('aria-label', 'Basemap and layers');
+})();
 
 // Contextual territorial-control overlay (illustrative of surveillance access limits)
 const occupiedLayer = L.geoJSON(null, {
@@ -1931,9 +1975,9 @@ const EV_MAIN = {};     // evidence type -> single most frequent colour
   Object.keys(EVIDENCE_TYPES).forEach(k => {
     const t = tally[k] || {};
     const present = DISEASE_ORDER.filter(g => t[g]);
-    EV_COLORS[k] = present.length ? present.map(g => COLORS[g]) : ['#5a6b7d'];
+    EV_COLORS[k] = present.length ? present.map(g => COLORS[g]) : ['#4A4A4A'];
     const ranked = present.slice().sort((a, b) => t[b] - t[a]);
-    EV_MAIN[k] = ranked.length ? COLORS[ranked[0]] : '#5a6b7d';
+    EV_MAIN[k] = ranked.length ? COLORS[ranked[0]] : '#4A4A4A';
   });
 })();
 

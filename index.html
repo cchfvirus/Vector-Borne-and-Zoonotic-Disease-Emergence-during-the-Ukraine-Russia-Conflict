@@ -1865,7 +1865,7 @@ L.control.scale({ position: 'bottomright', imperial: false }).addTo(map);
 
 // Contextual territorial-control overlay (illustrative of surveillance access limits)
 const occupiedLayer = L.geoJSON(null, {
-  style: { fillColor: '#8c8c8c', fillOpacity: 0.20, color: '#6f6f6f', weight: 1, opacity: 0.5, dashArray: '3,3' },
+  style: { fillColor: '#9aa5ae', fillOpacity: 0.16, color: '#7b8892', weight: 1.2, opacity: 0.65 },
   interactive: false
 }).addTo(map);
 
@@ -1891,9 +1891,11 @@ function symbolHTML(evidence, color, multi) {
     case 'baseline':    // hollow disc
       return '<div ' + base + 'width:15px;height:15px;border-radius:50%;background:#fff;border:3px solid ' +
              color + ';box-shadow:0 1px 3px rgba(0,0,0,.25)"></div>';
-    case 'ecological':  // dashed disc, translucent fill
-      return '<div ' + base + 'width:17px;height:17px;border-radius:50%;background:' + color +
-             '33;border:2px dashed ' + color + '"></div>';
+    case 'ecological':  // dashed ring with solid centre dot (no area fill)
+      return '<div ' + base + 'width:17px;height:17px;border-radius:50%;background:#fff;border:2px dashed ' +
+             color + ';box-shadow:0 1px 3px rgba(0,0,0,.18)">' +
+             '<span style="width:5px;height:5px;border-radius:50%;background:' + color + ';display:block"></span>' +
+             '</div>';
     case 'hypothetical': // dotted hollow disc
       return '<div ' + base + 'width:15px;height:15px;border-radius:50%;background:#fff;border:2px dotted ' +
              color + ';opacity:.9"></div>';

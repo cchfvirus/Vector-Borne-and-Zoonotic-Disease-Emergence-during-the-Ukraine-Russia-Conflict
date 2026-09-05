@@ -937,7 +937,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     </ul>
 
     <h4>Technical</h4>
-    <p>Leaflet 1.9.4, inlined for offline use. Basemap tiles from CARTO, Esri and OpenTopoMap; no API key is required for any layer. The contextual territorial-control overlay is loaded from an accompanying GeoJSON file and is illustrative of access constraints on surveillance, not a legal or authoritative boundary depiction.</p>
+    <p>Leaflet 1.9.4, inlined for offline use. Two basemaps are provided, both from Esri ArcGIS Online and neither requiring an API key: a light grey canvas (default) chosen so that symbol colour and shape carry the information rather than the underlying map, and satellite imagery for interpreting terrain and land cover at study locations. Each is paired with its reference label service. The contextual territorial-control overlay is loaded from an accompanying GeoJSON file and is illustrative of access constraints on surveillance, not a legal or authoritative boundary depiction.</p>
   </div>
 </div>
 
@@ -1829,34 +1829,36 @@ const map = L.map('map', {
   zoomControl: true
 });
 
-// Basemaps — all keyless (no API token required for any layer)
+// Basemaps — Esri only; neither layer requires an API key.
+// Each is a base tile service paired with its reference (label) service so
+// that oblast and settlement names remain legible.
+const esriAttr = '&copy; Esri &mdash; sources: Esri, HERE, Garmin, FAO, NOAA, USGS, &copy; OpenStreetMap contributors';
+const esriImgAttr = '&copy; Esri &mdash; sources: Esri, Maxar, Earthstar Geographics, and the GIS User Community';
+
+const greyBase = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+  { attribution: esriAttr, maxZoom: 16 }
+);
+const greyLabels = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+  { maxZoom: 16, pane: 'shadowPane' }
+);
+const imageryBase = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  { attribution: esriImgAttr, maxZoom: 18 }
+);
+const imageryLabels = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+  { maxZoom: 18, pane: 'shadowPane' }
+);
+
 const basemaps = {
-  'Light (CARTO Positron)': L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-    { attribution: '&copy; OpenStreetMap contributors &copy; CARTO', subdomains: 'abcd', maxZoom: 19 }
-  ),
-  'Light, no labels': L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
-    { attribution: '&copy; OpenStreetMap contributors &copy; CARTO', subdomains: 'abcd', maxZoom: 19 }
-  ),
-  'Voyager (place names)': L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-    { attribution: '&copy; OpenStreetMap contributors &copy; CARTO', subdomains: 'abcd', maxZoom: 19 }
-  ),
-  'Grey canvas (Esri)': L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-    { attribution: '&copy; Esri, HERE, Garmin, FAO, NOAA, USGS', maxZoom: 16 }
-  ),
-  'Terrain (OpenTopoMap)': L.tileLayer(
-    'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-    { attribution: '&copy; OpenStreetMap contributors, SRTM &mdash; &copy; OpenTopoMap (CC-BY-SA)', subdomains: 'abc', maxZoom: 17 }
-  ),
-  'Satellite (Esri)': L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    { attribution: '&copy; Esri, Maxar, Earthstar Geographics', maxZoom: 18 }
-  )
+  'Grey canvas (Esri)': L.layerGroup([greyBase, greyLabels]),
+  'Satellite (Esri)':   L.layerGroup([imageryBase, imageryLabels])
 };
-basemaps['Light (CARTO Positron)'].addTo(map);
+
+// Grey canvas is the default view on load.
+basemaps['Grey canvas (Esri)'].addTo(map);
 
 const layerControl = L.control.layers(basemaps, {}, { position: 'topright', collapsed: true }).addTo(map);
 L.control.scale({ position: 'bottomright', imperial: false }).addTo(map);

@@ -838,9 +838,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .lg-hatch{
     display:inline-block; width:20px; height:12px; flex-shrink:0;
     border:1px solid #ffffff; outline:1px solid rgba(31,42,51,.45);
-    background-color:rgba(20,28,36,.34);
+    background-color:rgba(20,28,36,.22);
     background-image:repeating-linear-gradient(45deg,
-      rgba(255,255,255,.8) 0 2.4px, transparent 2.4px 7px);
+      rgba(255,255,255,.42) 0 1.1px, transparent 1.1px 11px);
   }
   .map-legend .lg-foot{font-size:9px; color:var(--ink-3); margin-top:7px; padding-top:6px; border-top:1px solid var(--line-soft); line-height:1.5; max-width:245px}
 
@@ -1864,7 +1864,7 @@ const TAG_STYLES = {
 
 // ── Map ──────────────────────────────────────────────────────────────────
 const map = L.map('map', {
-  center: [48.9, 31.4],
+  center: [48.35, 32.2],
   zoom: 6,
   minZoom: 4,
   maxZoom: 11,
@@ -1924,11 +1924,11 @@ L.control.scale({ position: 'bottomright', imperial: false }).addTo(map);
 const HATCH_ID = 'occupied-hatch';
 
 const occCasing = L.geoJSON(null, {
-  style: { fill: false, color: '#1f2a33', weight: 3.2, opacity: 0.45 },
+  style: { fill: false, color: '#1f2a33', weight: 2.6, opacity: 0.38 },
   interactive: false
 });
 const occupiedLayer = L.geoJSON(null, {
-  style: { fillColor: '#ffffff', fillOpacity: 1, color: '#ffffff', weight: 1.3, opacity: 0.9 },
+  style: { fillColor: '#ffffff', fillOpacity: 1, color: '#ffffff', weight: 1.1, opacity: 0.75 },
   interactive: false
 });
 const occupiedGroup = L.layerGroup([occCasing, occupiedLayer]).addTo(map);
@@ -1940,18 +1940,24 @@ function ensureHatchPattern() {
   const defs = document.createElementNS(NS, 'defs');
   const pat = document.createElementNS(NS, 'pattern');
   pat.setAttribute('id', HATCH_ID);
-  pat.setAttribute('width', '7');
-  pat.setAttribute('height', '7');
+  // Leaflet recomputes path coordinates in screen pixels at every zoom level,
+  // so a userSpaceOnUse pattern stays a constant size on screen rather than
+  // scaling with the map. Spacing is wide and the rules are thin and soft so
+  // the hatch reads as a tint at low zoom without competing with the markers
+  // when zoomed in.
+  const SP = 11;
+  pat.setAttribute('width', String(SP));
+  pat.setAttribute('height', String(SP));
   pat.setAttribute('patternUnits', 'userSpaceOnUse');
   pat.setAttribute('patternTransform', 'rotate(45)');
   const bg = document.createElementNS(NS, 'rect');
-  bg.setAttribute('width', '7'); bg.setAttribute('height', '7');
-  bg.setAttribute('fill', '#141c24'); bg.setAttribute('fill-opacity', '0.34');
+  bg.setAttribute('width', String(SP)); bg.setAttribute('height', String(SP));
+  bg.setAttribute('fill', '#141c24'); bg.setAttribute('fill-opacity', '0.22');
   const line = document.createElementNS(NS, 'line');
   line.setAttribute('x1', '0'); line.setAttribute('y1', '0');
-  line.setAttribute('x2', '0'); line.setAttribute('y2', '7');
-  line.setAttribute('stroke', '#ffffff'); line.setAttribute('stroke-width', '2.4');
-  line.setAttribute('stroke-opacity', '0.8');
+  line.setAttribute('x2', '0'); line.setAttribute('y2', String(SP));
+  line.setAttribute('stroke', '#ffffff'); line.setAttribute('stroke-width', '1.1');
+  line.setAttribute('stroke-opacity', '0.42');
   pat.appendChild(bg); pat.appendChild(line);
   defs.appendChild(pat); svg.insertBefore(defs, svg.firstChild);
 }

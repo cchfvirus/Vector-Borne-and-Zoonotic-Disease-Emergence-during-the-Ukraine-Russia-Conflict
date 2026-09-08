@@ -2179,7 +2179,8 @@ legend.addTo(map);
 // instead, padded on the left by the legend's footprint and at the bottom by
 // the hint bar and attribution. The box extends south of the southernmost
 // marker so that Crimea stays fully in view.
-const VIEW_BOUNDS = L.latLngBounds([[44.15, 18.4], [52.6, 40.8]]);
+const VIEW_BOUNDS = L.latLngBounds([[44.15, 18.4], [52.6, 40.8]])
+  .pad(0.07);   // breathing room so Ukraine is not pressed against the frame
 
 function fitInitialView() {
   const wide = map.getSize().x >= 900;      // legend is only in the way on wide screens

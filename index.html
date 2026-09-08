@@ -680,6 +680,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
 //# sourceMappingURL=leaflet.js.map
 </script>
 
+<!-- Leaflet.markercluster 1.5.3: zoom-dependent aggregation and spiderfying -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
 <style>
   :root{
     --bg:#eceff2; --surface:#ffffff; --surface-2:#f5f7f9;
@@ -886,6 +891,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     background:rgba(255,255,255,.92); border:1px solid var(--line); border-radius:20px;
     padding:4px 14px; font-size:10px; color:var(--ink-3); pointer-events:none;
   }
+
+  .marker-cluster-small,
+  .marker-cluster-medium,
+  .marker-cluster-large{background:rgba(44,102,143,.28)}
+  .marker-cluster-small div,
+  .marker-cluster-medium div,
+  .marker-cluster-large div{
+    background:#2c668f; color:#fff; font-weight:700;
+    box-shadow:0 1px 4px rgba(0,0,0,.28)
+  }
 </style>
 </head>
 <body>
@@ -913,7 +928,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 </div>
 
 <div id="map"></div>
-<div id="hint">Select a marker for the underlying evidence &middot; scroll to zoom &middot; drag to pan</div>
+<div id="hint">Select a cluster to zoom &middot; select a marker for its evidence &middot; drag to pan</div>
 
 <div id="panel">
   <div id="panel-header">
@@ -974,7 +989,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     <p>Pathogen colors use the Okabe &amp; Ito qualitative palette, selected so that the five groups remain distinguishable under deuteranopia, protanopia and tritanopia; red&ndash;green pairings are avoided and every color holds at least 3:1 contrast against the light basemap. Evidence type is encoded by symbol shape rather than by color, so that dimension of the classification does not depend on color perception at all. Pathogen group is the one distinction carried by color alone; a reader who cannot rely on hue can isolate a single group using the pathogen filters above the map, and every marker panel names its pathogen groups in text.</p>
 
     <h4>Technical</h4>
-    <p>Leaflet 1.9.4 is inlined for offline use. Two Esri basemaps are provided without API keys: a Light Gray Canvas and satellite imagery, each paired with its reference-label service. Satellite imagery is the default view. The contextual territorial-control overlay is loaded from an accompanying GeoJSON file and is illustrative of access constraints on surveillance, not a legal or authoritative boundary depiction.</p>
+    <p>Leaflet 1.9.4 is inlined, and Leaflet.markercluster 1.5.3 provides zoom-dependent aggregation of nearby records. Clusters separate into individual evidence markers as the user zooms; records sharing the same coordinate spiderfy into individually selectable markers at maximum zoom. Two Esri basemaps are provided without API keys: a Light Gray Canvas and satellite imagery, each paired with its reference-label service. Satellite imagery is the default view. The contextual territorial-control overlay is loaded from an accompanying GeoJSON file and is illustrative of access constraints on surveillance, not a legal or authoritative boundary depiction.</p>
   </div>
 </div>
 
@@ -2074,6 +2089,15 @@ const EV_MAIN = {};     // evidence type -> single most frequent colour
   });
 })();
 
+const markerClusters = L.markerClusterGroup({
+  showCoverageOnHover: false,
+  zoomToBoundsOnClick: true,
+  spiderfyOnMaxZoom: true,
+  spiderfyDistanceMultiplier: 1.35,
+  maxClusterRadius: 34,
+  removeOutsideVisibleBounds: false
+}).addTo(map);
+
 const allMarkers = [];
 locations.forEach(loc => {
   const marker = L.marker([loc.lat, loc.lng], {
@@ -2146,8 +2170,8 @@ function applyVisibility() {
   allMarkers.forEach(m => {
     const show = activeEvidence.has(m.locData.evidence) &&
                  m.locData.diseases.some(d => activeDiseases.has(d));
-    if (show && !m._shown) { m.addTo(map); m._shown = true; }
-    else if (!show && m._shown) { map.removeLayer(m); m._shown = false; }
+    if (show && !m._shown) { markerClusters.addLayer(m); m._shown = true; }
+    else if (!show && m._shown) { markerClusters.removeLayer(m); m._shown = false; }
   });
 }
 

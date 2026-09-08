@@ -686,7 +686,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     --line:#d3dae1; --line-soft:#e6ebef;
     --ink:#1c252e; --ink-2:#4a5966; --ink-3:#77879a;
     --accent:#1f5f7d;
-    /* Okabe & Ito colour-vision-deficiency-safe pathogen palette */
+    /* Okabe & Ito color-vision-deficiency-safe pathogen palette */
     --lepto:#D55E00; --tular:#CC79A7; --hanta:#0072B2; --vector:#009E73; --context:#4A4A4A;
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -935,10 +935,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
   <div class="docked-body">
 
     <h4>What this map is</h4>
-    <p>An evidence inventory and hypothesis-generating interface for the accompanying structured narrative review. Each marker records a published observation about a pathogen, vector, reservoir or surveillance system in Ukraine or a neighbouring state. Markers are <strong>not</strong> case records, and the map is <strong>not</strong> an incidence surface, a risk surface, or an assessment of operational vulnerability.</p>
+    <p>An evidence inventory and hypothesis-generating interface for the accompanying structured narrative review. Each marker records a published observation about a pathogen, vector, reservoir or surveillance system in Ukraine or a neighboring state. Markers are <strong>not</strong> case records, and the map is <strong>not</strong> an incidence surface, a risk surface, or an assessment of operational vulnerability.</p>
 
     <h4>Selection of geospatial records</h4>
-    <p>Locations were drawn only from sources meeting the eligibility criteria of the review (Methods &sect;2.2). A source generated a marker where it reported a geographically attributable observation: a surveillance summary for a named administrative unit, a clinical report, a laboratory or field detection at a named study area, an institutional surveillance function, or a contextual event. Sources reporting only national aggregates without geographic detail are placed at a national centroid and labelled as such. Where several sources described the same place and the same class of evidence, they were combined into a single marker rather than plotted repeatedly, so that marker density does not track publication volume.</p>
+    <p>Primary evidence locations were drawn from the 44 records meeting the review eligibility criteria (Methods &sect;2.2). Contextual and unverified reports are displayed separately and are not counted among those included evidence records. An included source generated a marker where it reported a geographically attributable observation: a surveillance summary for a named administrative unit, a clinical report, a laboratory or field detection at a named study area, an institutional surveillance function, or a contextual event. Sources reporting only national aggregates without geographic detail are placed at a national centroid and labeled as such. Where several sources described the same place and the same class of evidence, they were combined into a single marker rather than plotted repeatedly, so that marker density does not track publication volume.</p>
 
     <h4>Classification, not weighting</h4>
     <p>Markers are classified by pathogen group and by evidence type. They are deliberately <strong>not</strong> weighted into a common risk score, and symbol size carries no quantitative meaning. Evidence type follows the six categories used in the review:</p>
@@ -946,11 +946,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <li><strong>Documented conflict-period incidence</strong> &mdash; notified cases or clinical reports from 2022 onward.</li>
       <li><strong>Documented conflict-period laboratory detection</strong> &mdash; pathogen detected in samples collected or reported during the conflict period.</li>
       <li><strong>Pre-conflict baseline</strong> &mdash; endemicity, reservoir or vector presence established before 2022.</li>
-      <li><strong>Ecological risk evidence</strong> &mdash; habitat, reservoir or modelled suitability observations bearing on exposure opportunity.</li>
+      <li><strong>Ecological risk evidence</strong> &mdash; habitat, reservoir or modeled suitability observations bearing on exposure opportunity.</li>
       <li><strong>Unverified conflict-period report</strong> &mdash; media or military claims without diagnostic documentation.</li>
       <li><strong>Hypothetical pathway</strong> &mdash; a biologically plausible route with no supporting observation in Ukraine during the conflict period.</li>
     </ol>
-    <p>Institutional and system-level records that are not disease observations are shown separately as contextual records.</p>
+    <p>Institutional, system-level, and unverified media or military records that are not disease observations are shown separately as contextual records and do not contribute to epidemiological evidence counts.</p>
 
     <h4>Evidence quality</h4>
     <p>Quality is appraised across six domains: diagnostic certainty; study or source design; geographic representativeness; temporal relevance to the conflict; surveillance completeness and risk of bias; and directness for conflict-associated change. <em>High</em> requires confirmed conflict-period surveillance or laboratory findings with defined populations and locations. <em>Moderate</em> covers laboratory-confirmed ecological or veterinary findings, or robust pre-conflict surveillance directly relevant to current risk. <em>Low</em> covers limited case reports, ecological inference, historical analogy or incomplete surveillance. <em>Very low</em> covers unverified reports and hypothetical pathways.</p>
@@ -959,22 +959,22 @@ svg.leaflet-image-layer.leaflet-interactive path {
     <p>Media and military claims lacking diagnostic documentation or independent corroboration are classified as unverified and are <strong>excluded from the primary evidence layer</strong>; the layer is switched off by default and must be enabled deliberately. These records are retained only to illustrate the limits of conflict-zone information and are excluded from any causal or incidence interpretation.</p>
 
     <h4>Coordinates and positional uncertainty</h4>
-    <p>Coordinates were taken from the source where reported, and otherwise assigned to the named settlement or to an oblast, national or country centroid. Positional uncertainty is greatest for oblast-level and indirectly geocoded records, which are labelled individually in each marker panel. A centroid indicates the administrative unit a record refers to; it does not indicate where transmission occurred.</p>
+    <p>Coordinates were taken from the source where reported, and otherwise assigned to the named settlement or to an oblast, national or country centroid. Positional uncertainty is greatest for oblast-level and indirectly geocoded records, which are labeled individually in each marker panel. A centroid indicates the administrative unit a record refers to; it does not indicate where transmission occurred.</p>
 
     <h4>Limitations of mixed-quality data</h4>
     <ul>
       <li>Records were collected for different purposes, at different spatial resolutions and across different time periods; they are not directly comparable with one another.</li>
-      <li>Comparator national rates for neighbouring states come from differing surveillance systems and are not harmonised estimates.</li>
+      <li>Comparator national rates for neighboring states come from differing surveillance systems and are not harmonized estimates.</li>
       <li>Research capacity is unevenly distributed, so regions hosting active research groups yield more published detections. Marker density partly reflects where scientists have worked, not only where pathogens are.</li>
       <li>Surveillance in occupied and front-line areas is incomplete or absent. An empty area of the map indicates missing observation, and is evidence neither of absent transmission nor of increased transmission.</li>
       <li>Absence of a marker for a pathogen in an oblast means no eligible source reported one; it does not mean the pathogen is absent.</li>
     </ul>
 
     <h4>Accessibility of the symbology</h4>
-    <p>Pathogen colours use the Okabe &amp; Ito qualitative palette, selected so that the five groups remain distinguishable under deuteranopia, protanopia and tritanopia; red&ndash;green pairings are avoided and every colour holds at least 3:1 contrast against the light basemap. Evidence type is encoded by symbol shape rather than by colour, so that dimension of the classification does not depend on colour perception at all. Pathogen group is the one distinction carried by colour alone; a reader who cannot rely on hue can isolate a single group using the pathogen filters above the map, and every marker panel names its pathogen groups in text.</p>
+    <p>Pathogen colors use the Okabe &amp; Ito qualitative palette, selected so that the five groups remain distinguishable under deuteranopia, protanopia and tritanopia; red&ndash;green pairings are avoided and every color holds at least 3:1 contrast against the light basemap. Evidence type is encoded by symbol shape rather than by color, so that dimension of the classification does not depend on color perception at all. Pathogen group is the one distinction carried by color alone; a reader who cannot rely on hue can isolate a single group using the pathogen filters above the map, and every marker panel names its pathogen groups in text.</p>
 
     <h4>Technical</h4>
-    <p>Leaflet 1.9.4, inlined for offline use. Two basemaps are provided, both from Esri ArcGIS Online and neither requiring an API key: a light grey canvas (default) chosen so that symbol colour and shape carry the information rather than the underlying map, and satellite imagery for interpreting terrain and land cover at study locations. Each is paired with its reference label service. The contextual territorial-control overlay is loaded from an accompanying GeoJSON file and is illustrative of access constraints on surveillance, not a legal or authoritative boundary depiction.</p>
+    <p>Leaflet 1.9.4 is inlined for offline use. Two neutral basemaps are provided without API keys: CARTO Positron (default) and OpenStreetMap Standard. The restrained default was selected so that symbol color and shape carry the information rather than the underlying map. The contextual territorial-control overlay is loaded from an accompanying GeoJSON file and is illustrative of access constraints on surveillance, not a legal or authoritative boundary depiction.</p>
   </div>
 </div>
 
@@ -1001,7 +1001,7 @@ const EVIDENCE_TYPES = {
   lab:          { label: 'Documented conflict-period lab detection',    short: 'Conflict-period detection' },
   baseline:     { label: 'Pre-conflict baseline',                       short: 'Pre-conflict baseline' },
   ecological:   { label: 'Ecological risk evidence',                    short: 'Ecological risk' },
-  unverified:   { label: 'Unverified conflict-period report',           short: 'Unverified report' },
+  unverified:   { label: 'Contextual report (unverified)',              short: 'Contextual—unverified' },
   hypothetical: { label: 'Hypothetical pathway',                        short: 'Hypothetical pathway' },
   context:      { label: 'Contextual / institutional record',           short: 'Context' }
 };
@@ -1273,15 +1273,15 @@ const locations = [
       { label: 'Conflict-period incidence', value: 'None identified' },
       { label: 'Priority gap', value: 'Serological surveys in combatants and civilians' }
     ],
-    notes: 'Hantavirus infections have affected military forces in earlier conflicts, and crowded or rodent-infested settings can facilitate exposure to aerosolised rodent excreta. This establishes a plausible pathway only. No verified conflict-period hantavirus incidence data for Ukraine were identified in the reviewed literature. Serological survey of combatants and civilians is the principal gap. Placement is a national centroid and does not indicate a location of transmission.',
+    notes: 'Hantavirus infections have affected military forces in earlier conflicts, and crowded or rodent-infested settings can facilitate exposure to aerosolized rodent excreta. This establishes a plausible pathway only. No verified conflict-period hantavirus incidence data for Ukraine were identified in the reviewed literature. Serological survey of combatants and civilians is the principal gap. Placement is a national centroid and does not indicate a location of transmission.',
     source: 'Mustonen et al. 2024 (Mil Med)'
   },
   {
     id: 'kupyansk',
-    name: 'Kupyansk area — unverified illness reports',
-    subtitle: 'Military and media reports; no diagnostic documentation',
+    name: 'Kupyansk area — contextual report',
+    subtitle: 'Unverified “mouse fever” report; not an epidemiological event',
     lat: 49.71, lng: 37.62,
-    diseases: ['hantavirus'],
+    diseases: ['contextual'],
     evidence: 'unverified', quality: 'verylow', geo: 'site',
     stats: [
       { label: 'Source type', value: 'Military channel and media reporting' },
@@ -1289,7 +1289,7 @@ const locations = [
       { label: 'Case definition / line list', value: 'Not available' },
       { label: 'Classification', value: 'Not a confirmed outbreak' }
     ],
-    notes: 'Military and media sources reported a nonspecific illness described as "mouse fever" affecting personnel in this area in December 2023. No diagnostic results, case definition, independently verified line list, or peer-reviewed investigation is available. These reports cannot be classified as a confirmed hantavirus outbreak and are excluded from the primary evidence layer of this map. They are retained solely to illustrate the limits of conflict-zone information, and are not used to support any incidence or causal conclusion.',
+    notes: 'Military and media sources reported a nonspecific illness described as "mouse fever" affecting personnel in this area in December 2023. No diagnostic results, case definition, independently verified line list, or peer-reviewed investigation is available. This report cannot be classified as a confirmed hantavirus outbreak and is excluded from the primary epidemiological evidence layer. The marker indicates reported context only, is switched off by default, and is not used in evidence counts or to support any incidence or causal conclusion.',
     source: 'Unverified reports (military channel, Dec 2023; Newsweek 2023; Kyiv Post 2025). Retained as unverified only.'
   },
   {
@@ -1336,7 +1336,7 @@ const locations = [
       { label: 'Pathogen detection', value: 'None reported' },
       { label: 'Inference supported', value: 'Exposure opportunity only' }
     ],
-    notes: 'Media field reporting from 2024 described rodent abundance in dug-in positions in this area. Prolonged human–rodent proximity is a recognised exposure pathway for leptospirosis and for aerosolised hantavirus exposure, but no pathogen detection, case ascertainment, or serological investigation accompanies these reports. The observation supports a plausible exposure pathway and nothing further.',
+    notes: 'Media field reporting from 2024 described rodent abundance in dug-in positions in this area. Prolonged human–rodent proximity is a recognized exposure pathway for leptospirosis and for aerosolized hantavirus exposure, but no pathogen detection, case ascertainment, or serological investigation accompanies these reports. The observation supports a plausible exposure pathway and nothing further.',
     source: 'Media field reporting (CNN, 2024) — non-peer-reviewed observation; pathway context from Saunders et al. 2024'
   },
   {
@@ -1451,7 +1451,7 @@ const locations = [
   {
     id: 'ukraine_anaplasmosis',
     name: 'Ukraine — human granulocytic anaplasmosis',
-    subtitle: 'Recognised local burden; diagnostic model developed',
+    subtitle: 'Recognized local burden; diagnostic model developed',
     lat: 48.5, lng: 28.5,
     diseases: ['vector'],
     evidence: 'baseline', quality: 'low', geo: 'national',
@@ -1461,7 +1461,7 @@ const locations = [
       { label: 'Evidence form', value: 'Preliminary diagnostic model' },
       { label: 'Conflict-period change', value: 'Not established' }
     ],
-    notes: 'Development of a model for preliminary diagnosis of human granulocytic anaplasmosis indicates a recognised local disease burden. The pathogen shares vector and reservoir hosts with tick-borne encephalitis virus and Borrelia. No conflict-attributable increase has been demonstrated; the principal need is reinstated tick-borne disease surveillance.',
+    notes: 'Development of a model for preliminary diagnosis of human granulocytic anaplasmosis indicates a recognized local disease burden. The pathogen shares vector and reservoir hosts with tick-borne encephalitis virus and Borrelia. No conflict-attributable increase has been demonstrated; the principal need is reinstated tick-borne disease surveillance.',
     source: 'Ben et al. 2023 (VBZD)'
   },
   {
@@ -1477,7 +1477,7 @@ const locations = [
       { label: 'Human seropositivity', value: 'Reported in patient sera' },
       { label: 'Conflict-period data', value: 'None identified' }
     ],
-    notes: 'Relapsing-fever Borrelia has been isolated and molecularly characterised from Ornithodoros verrucosus soft ticks collected in Ukraine, and immunoblot testing has reported seropositivity in Ukrainian patient sera. Soft ticks are associated with rodent burrows and farm structures, which suggests a plausible exposure pathway in dug-in positions; this pathway has not been tested and no conflict-period cases were identified. Clinical awareness and soft-tick surveillance are the stated gaps.',
+    notes: 'Relapsing-fever Borrelia has been isolated and molecularly characterized from Ornithodoros verrucosus soft ticks collected in Ukraine, and immunoblot testing has reported seropositivity in Ukrainian patient sera. Soft ticks are associated with rodent burrows and farm structures, which suggests a plausible exposure pathway in dug-in positions; this pathway has not been tested and no conflict-period cases were identified. Clinical awareness and soft-tick surveillance are the stated gaps.',
     source: 'Filatov et al. 2020 (J Infect Dis); Shah et al. 2019 (Healthcare)'
   },
   {
@@ -1540,7 +1540,7 @@ const locations = [
       { label: 'Evidence form', value: 'Single clinical case report' },
       { label: 'Conflict-period outbreak', value: 'None identified' }
     ],
-    notes: 'A clinical case report documented neuroinvasive West Nile virus disease in the Poltava region, indicating human WNV exposure outside the classically recognised southern zone. A single case report establishes occurrence, not incidence. No verified post-2022 WNV outbreak attributable to the conflict was identified; WNV is best treated as an ecologically plausible surveillance priority.',
+    notes: 'A clinical case report documented neuroinvasive West Nile virus disease in the Poltava region, indicating human WNV exposure outside the classically recognized southern zone. A single case report establishes occurrence, not incidence. No verified post-2022 WNV outbreak attributable to the conflict was identified; WNV is best treated as an ecologically plausible surveillance priority.',
     source: 'Kotelevska et al. 2020 (Wiad Lek)'
   },
   {
@@ -1600,9 +1600,9 @@ const locations = [
     evidence: 'context', quality: 'low', geo: 'country',
     stats: [
       { label: 'Reported national rate', value: '~0.15 /100,000' },
-      { label: 'Comparability', value: 'Not harmonised across countries' }
+      { label: 'Comparability', value: 'Not harmonized across countries' }
     ],
-    notes: 'Comparator value retained only as reported in the cited surveillance analysis. Case definitions, testing practice and reporting completeness differ between national systems, so this figure should not be treated as a harmonised cross-national estimate or used to infer a gradient of risk across the border.',
+    notes: 'Comparator value retained only as reported in the cited surveillance analysis. Case definitions, testing practice and reporting completeness differ between national systems, so this figure should not be treated as a harmonized cross-national estimate or used to infer a gradient of risk across the border.',
     source: 'Petakh et al. 2024 (comparator values as reported)'
   },
   {
@@ -1614,7 +1614,7 @@ const locations = [
     evidence: 'context', quality: 'low', geo: 'country',
     stats: [
       { label: 'Reported national rate', value: '~0.34 /100,000' },
-      { label: 'Comparability', value: 'Not harmonised across countries' }
+      { label: 'Comparability', value: 'Not harmonized across countries' }
     ],
     notes: 'The highest reported comparator rate among Ukraine\'s bordering EU member states in the cited analysis. As with the other comparators, differences in surveillance systems mean this value is not directly comparable with Ukrainian oblast-level figures.',
     source: 'Petakh et al. 2024 (comparator values as reported)'
@@ -1675,25 +1675,25 @@ const locations = [
       { label: 'Effect on data', value: 'Reduced diagnostic and reporting capacity' },
       { label: 'Interpretation', value: 'Uncertainty in both directions' }
     ],
-    notes: 'Damage to health infrastructure, restricted access and large-scale internal and cross-border displacement have constrained routine surveillance and response since 2022. Open-source epidemic intelligence identified under-ascertainment during the early conflict. Displacement is also a recognised general risk factor for zoonotic disease transmission. These conditions affect both exposure and detection, and the resulting missing data limit inference in both directions.',
+    notes: 'Damage to health infrastructure, restricted access and large-scale internal and cross-border displacement have constrained routine surveillance and response since 2022. Open-source epidemic intelligence identified under-ascertainment during the early conflict. Displacement is also a recognized general risk factor for zoonotic disease transmission. These conditions affect both exposure and detection, and the resulting missing data limit inference in both directions.',
     source: 'Roborgh et al. 2022 (Lancet); Physicians for Human Rights 2023; WHO 2022 (PHSA); Kannan et al. 2024; Salajegheh Tazerji et al. 2025'
   },
 
-  // ── CCHF: vector suitability modelling ────────────────────────────────
+  // ── CCHF: vector suitability modeling ────────────────────────────────
   {
     id: 'ukraine_cchf_suitability',
-    name: 'Southern Ukraine — modelled Hyalomma suitability',
-    subtitle: 'Species-distribution modelling; no verified conflict-period cases',
+    name: 'Southern Ukraine — modeled Hyalomma suitability',
+    subtitle: 'Species-distribution modeling; no verified conflict-period cases',
     lat: 46.9, lng: 34.4,
     diseases: ['vector'],
     evidence: 'ecological', quality: 'low', geo: 'oblast',
     stats: [
       { label: 'Vector', value: 'Hyalomma marginatum' },
-      { label: 'Evidence form', value: 'Climatic suitability modelling' },
+      { label: 'Evidence form', value: 'Climatic suitability modeling' },
       { label: 'Established populations', value: 'Not demonstrated at this location' },
       { label: 'Conflict-period human cases', value: 'None identified' }
     ],
-    notes: 'Species-distribution models indicate climatic suitability for Hyalomma marginatum, the principal CCHF vector, across parts of southern and eastern Europe, and review-level work describes CCHF as an emerging European concern. Modelled suitability is not equivalent to confirmed vector establishment, infected ticks, or human cases at any specific site. Interruption of livestock management and acaricide use could increase exposure, and warming may expand suitable areas, but neither pathway has been linked to verified post-2022 CCHF incidence in Ukraine. Placement is indicative of the modelled southern zone, not a field detection.',
+    notes: 'Species-distribution models indicate climatic suitability for Hyalomma marginatum, the principal CCHF vector, across parts of southern and eastern Europe, and review-level work describes CCHF as an emerging European concern. Modelled suitability is not equivalent to confirmed vector establishment, infected ticks, or human cases at any specific site. Interruption of livestock management and acaricide use could increase exposure, and warming may expand suitable areas, but neither pathway has been linked to verified post-2022 CCHF incidence in Ukraine. Placement is indicative of the modeled southern zone, not a field detection.',
     source: 'Celina et al. 2023 (PLoS NTD); Parvage et al. 2025 (Parasit Vectors); Fereidouni et al. 2025 (Virol Sin)'
   }
 ];
@@ -1765,7 +1765,7 @@ const SOURCE_GROUPS = [
     ]
   },
   {
-    title: 'Crimean\u2013Congo haemorrhagic fever and Hyalomma vectors',
+    title: 'Crimean\u2013Congo hemorrhagic fever and Hyalomma vectors',
     items: [
       { ref: 'Celina SS, \u010cern\u00fd J, Samy AM. Mapping the potential distribution of <em>Hyalomma marginatum</em> in the Old World. <em>PLoS Negl Trop Dis</em> 2023;17(11):e0010855.', doi: '10.1371/journal.pntd.0010855' },
       { ref: 'Parvage MM, Baron JN, Semenza JC, Omazic A. Emergence and spread of <em>Hyalomma</em> ticks and CCHF in Europe: a systematic review. <em>Parasit Vectors</em> 2025;18(1):436.', doi: '10.1186/s13071-025-07104-3' },
@@ -1845,21 +1845,24 @@ const COLORS = {
   tularemia:     '#CC79A7',  // reddish purple
   hantavirus:    '#0072B2',  // blue
   vector:        '#009E73',  // bluish green
-  event:         '#4A4A4A'   // neutral dark grey
+  event:         '#4A4A4A',  // neutral dark gray
+  contextual:    '#6B7280'   // unverified contextual reports
 };
 const DISEASE_LABELS = {
   leptospirosis: 'Leptospirosis',
   tularemia:     'Tularemia',
   hantavirus:    'Hantavirus',
   vector:        'Vector-borne / other',
-  event:         'Context & events'
+  event:         'Context & events',
+  contextual:    'Contextual report only'
 };
 const TAG_STYLES = {
   leptospirosis: 'background:#fbeee5; color:#8f3f00; border-color:#eec4a4',
   tularemia:     'background:#faeef4; color:#8c4a70; border-color:#e5c2d5',
   hantavirus:    'background:#e6f0f7; color:#005486; border-color:#a9c9de',
   vector:        'background:#e3f4ef; color:#00674b; border-color:#a3d6c5',
-  event:         'background:#eeeeee; color:#3d3d3d; border-color:#c9c9c9'
+  event:         'background:#eeeeee; color:#3d3d3d; border-color:#c9c9c9',
+  contextual:    'background:#f3f4f6; color:#374151; border-color:#9ca3af'
 };
 
 // ── Map ──────────────────────────────────────────────────────────────────
@@ -1873,36 +1876,29 @@ const map = L.map('map', {
   zoomControl: true
 });
 
-// Basemaps — Esri only; neither layer requires an API key.
-// Each is a base tile service paired with its reference (label) service so
-// that oblast and settlement names remain legible.
-const esriAttr = '&copy; Esri &mdash; sources: Esri, HERE, Garmin, FAO, NOAA, USGS, &copy; OpenStreetMap contributors';
-const esriImgAttr = '&copy; Esri &mdash; sources: Esri, Maxar, Earthstar Geographics, and the GIS User Community';
-
-const greyBase = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-  { attribution: esriAttr, maxZoom: 16 }
+// Neutral basemaps; neither service requires an API key.
+const cartoPositron = L.tileLayer(
+  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    subdomains: 'abcd', maxZoom: 20
+  }
 );
-const greyLabels = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
-  { maxZoom: 16, pane: 'shadowPane' }
-);
-const imageryBase = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  { attribution: esriImgAttr, maxZoom: 18 }
-);
-const imageryLabels = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
-  { maxZoom: 18, pane: 'shadowPane' }
+const osmStandard = L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    attribution: '&copy; OpenStreetMap contributors',
+    subdomains: 'abc', maxZoom: 19
+  }
 );
 
 const basemaps = {
-  'Grey canvas (Esri)': L.layerGroup([greyBase, greyLabels]),
-  'Satellite (Esri)':   L.layerGroup([imageryBase, imageryLabels])
+  'Light canvas (CARTO)': cartoPositron,
+  'OpenStreetMap Standard': osmStandard
 };
 
-// Satellite imagery is the default view on load.
-basemaps['Satellite (Esri)'].addTo(map);
+// A neutral light canvas is the default view.
+basemaps['Light canvas (CARTO)'].addTo(map);
 
 const layerControl = L.control.layers(basemaps, {}, { position: 'topright', collapsed: true }).addTo(map);
 L.control.scale({ position: 'bottomright', imperial: false }).addTo(map);
@@ -1918,8 +1914,8 @@ L.control.scale({ position: 'bottomright', imperial: false }).addTo(map);
 })();
 
 // Contextual territorial-control overlay (illustrative of surveillance access
-// limits). Rendered as a diagonal hatch so it stays legible over satellite
-// imagery as well as the grey canvas: the pattern carries both a dark tint,
+// limits). Rendered as a diagonal hatch so it stays legible over the light
+// canvas: the pattern carries both a dark tint,
 // which reads against a pale basemap, and white rules, which read against a
 // dark one. A darker casing line sits under the white border for the same
 // reason.
@@ -2020,11 +2016,11 @@ function makeIcon(loc) {
 }
 
 // Evidence type is orthogonal to pathogen group, so a single evidence symbol
-// can appear in several colours. Derive from the data which pathogen colours
+// can appear in several colours. Derive from the data which pathogen colors
 // each evidence type actually uses, so the legend shows real map colours
 // rather than a grey stand-in.
-const DISEASE_ORDER = ['leptospirosis', 'tularemia', 'hantavirus', 'vector', 'event'];
-const EV_COLORS = {};   // evidence type -> array of colours present on the map
+const DISEASE_ORDER = ['leptospirosis', 'tularemia', 'hantavirus', 'vector', 'event', 'contextual'];
+const EV_COLORS = {};   // evidence type -> array of colors present on the map
 const EV_MAIN = {};     // evidence type -> single most frequent colour
 (function deriveEvidencePalettes() {
   const tally = {};
@@ -2055,7 +2051,7 @@ locations.forEach(loc => {
 
 // ── Detail panel ─────────────────────────────────────────────────────────
 const CAVEATS = {
-  unverified: 'This record is an unverified report. It carries no diagnostic confirmation, case definition or verified line list, is excluded from the primary evidence layer, and must not be read as a confirmed outbreak.',
+  unverified: 'This is a contextual, unverified report. It has no diagnostic confirmation, case definition, independently verified line list, or peer-reviewed outbreak investigation. It is excluded from the primary epidemiological evidence layer and must not be interpreted as a confirmed hantavirus outbreak.',
   hypothetical: 'This record describes a plausible pathway only. No supporting observation from Ukraine during the conflict period was identified.',
   ecological: 'This record describes exposure opportunity or habitat suitability. It does not measure pathogen prevalence or human infection.',
   baseline: 'This record predates the full-scale invasion. It establishes endemicity, reservoir or vector presence, not conflict-period change.'
@@ -2107,7 +2103,7 @@ document.getElementById('panel-close').onclick = () =>
 // Unverified reports are OFF by default: they are excluded from the primary
 // evidence layer and must be enabled deliberately.
 const activeEvidence = new Set(['incidence', 'lab', 'baseline', 'ecological', 'hypothetical', 'context']);
-const activeDiseases = new Set(['leptospirosis', 'tularemia', 'hantavirus', 'vector', 'event']);
+const activeDiseases = new Set(['leptospirosis', 'tularemia', 'hantavirus', 'vector', 'event', 'contextual']);
 
 function applyVisibility() {
   allMarkers.forEach(m => {
@@ -2165,8 +2161,8 @@ legend.onAdd = function () {
     '<div class="lg-title">Evidence type (symbol)</div>' + rows +
     '<div class="lg-row" style="margin-top:6px;padding-top:6px;border-top:1px solid var(--line-soft)">' +
       '<span class="lg-hatch"></span>Areas of constrained surveillance access</div>' +
-    '<div class="lg-foot">Each symbol is shown in every pathogen colour it takes on the map: shape denotes ' +
-    'evidence type, colour denotes pathogen group (see filters above). Symbol size is constant and encodes ' +
+    '<div class="lg-foot">Each symbol is shown in every pathogen color it takes on the map: shape denotes ' +
+    'evidence type, color denotes pathogen group (see filters above). Symbol size is constant and encodes ' +
     'no magnitude &mdash; markers are classified, not weighted into a risk score.</div>';
   L.DomEvent.disableClickPropagation(div);
   return div;
@@ -2220,15 +2216,15 @@ function renderSources() {
       const cls = it.tier ? ' ' + it.tier : '';
       h += '<div class="src-entry' + cls + '">' + it.ref +
            (it.doi ? ' <a href="https://doi.org/' + it.doi + '" target="_blank" rel="noopener">doi:' + it.doi + '</a>' : '') +
-           (it.tier === 'grey-lit' ? ' <em>&mdash; institutional grey literature</em>' : '') +
+           (it.tier === 'grey-lit' ? ' <em>&mdash; institutional gray literature</em>' : '') +
            (it.tier === 'unverified' ? ' <em>&mdash; unverified; excluded from the primary evidence layer</em>' : '') +
            '</div>';
     });
   });
-  h += '<div class="docked-note">The companion structured narrative review includes 69 sources in total, ' +
+  h += '<div class="docked-note">The companion structured narrative review screened 69 unique records; 25 were excluded and 44 were included in the evidence synthesis. Included records were ' +
        'appraised across diagnostic certainty, source design, geographic representativeness, temporal relevance, ' +
        'surveillance completeness and directness for conflict-associated change. Entries shaded amber are ' +
-       'institutional grey literature; entries shaded red are unverified media or military reports retained only ' +
+       'institutional gray literature; entries shaded red are unverified media or military reports retained only ' +
        'to illustrate the limits of conflict-zone information. PubMed/MEDLINE searched and updated through ' +
        '2 September 2026, with supplementary searches of Europe PMC, Google Scholar, WHO, ECDC, WOAH and ' +
        'Ukrainian public-health and veterinary repositories.</div>';

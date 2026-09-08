@@ -974,7 +974,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     <p>Pathogen colors use the Okabe &amp; Ito qualitative palette, selected so that the five groups remain distinguishable under deuteranopia, protanopia and tritanopia; red&ndash;green pairings are avoided and every color holds at least 3:1 contrast against the light basemap. Evidence type is encoded by symbol shape rather than by color, so that dimension of the classification does not depend on color perception at all. Pathogen group is the one distinction carried by color alone; a reader who cannot rely on hue can isolate a single group using the pathogen filters above the map, and every marker panel names its pathogen groups in text.</p>
 
     <h4>Technical</h4>
-    <p>Leaflet 1.9.4 is inlined for offline use. Two neutral basemaps are provided without API keys: CARTO Positron (default) and OpenStreetMap Standard. The restrained default was selected so that symbol color and shape carry the information rather than the underlying map. The contextual territorial-control overlay is loaded from an accompanying GeoJSON file and is illustrative of access constraints on surveillance, not a legal or authoritative boundary depiction.</p>
+    <p>Leaflet 1.9.4 is inlined for offline use. Two Esri basemaps are provided without API keys: a Light Gray Canvas and satellite imagery, each paired with its reference-label service. Satellite imagery is the default view. The contextual territorial-control overlay is loaded from an accompanying GeoJSON file and is illustrative of access constraints on surveillance, not a legal or authoritative boundary depiction.</p>
   </div>
 </div>
 
@@ -1876,29 +1876,36 @@ const map = L.map('map', {
   zoomControl: true
 });
 
-// Neutral basemaps; neither service requires an API key.
-const cartoPositron = L.tileLayer(
-  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-  {
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    subdomains: 'abcd', maxZoom: 20
-  }
+// Esri basemaps; neither layer requires an API key.
+// Each base service is paired with its reference-label service so that
+// oblast and settlement names remain legible.
+const esriAttr = '&copy; Esri &mdash; sources: Esri, HERE, Garmin, FAO, NOAA, USGS, &copy; OpenStreetMap contributors';
+const esriImgAttr = '&copy; Esri &mdash; sources: Esri, Maxar, Earthstar Geographics, and the GIS User Community';
+
+const grayBase = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+  { attribution: esriAttr, maxZoom: 16 }
 );
-const osmStandard = L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; OpenStreetMap contributors',
-    subdomains: 'abc', maxZoom: 19
-  }
+const grayLabels = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+  { maxZoom: 16, pane: 'shadowPane' }
+);
+const imageryBase = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  { attribution: esriImgAttr, maxZoom: 18 }
+);
+const imageryLabels = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+  { maxZoom: 18, pane: 'shadowPane' }
 );
 
 const basemaps = {
-  'Light canvas (CARTO)': cartoPositron,
-  'OpenStreetMap Standard': osmStandard
+  'Light Gray Canvas (Esri)': L.layerGroup([grayBase, grayLabels]),
+  'Satellite (Esri)': L.layerGroup([imageryBase, imageryLabels])
 };
 
-// A neutral light canvas is the default view.
-basemaps['Light canvas (CARTO)'].addTo(map);
+// Restore satellite imagery as the default view.
+basemaps['Satellite (Esri)'].addTo(map);
 
 const layerControl = L.control.layers(basemaps, {}, { position: 'topright', collapsed: true }).addTo(map);
 L.control.scale({ position: 'bottomright', imperial: false }).addTo(map);

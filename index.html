@@ -938,7 +938,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     <p>An evidence inventory and hypothesis-generating interface for the accompanying structured narrative review. Each marker records a published observation about a pathogen, vector, reservoir or surveillance system in Ukraine or a neighboring state. Markers are <strong>not</strong> case records, and the map is <strong>not</strong> an incidence surface, a risk surface, or an assessment of operational vulnerability.</p>
 
     <h4>Selection of geospatial records</h4>
-    <p>Primary evidence locations were drawn from the 44 records meeting the review eligibility criteria (Methods &sect;2.2). Contextual and unverified reports are displayed separately and are not counted among those included evidence records. An included source generated a marker where it reported a geographically attributable observation: a surveillance summary for a named administrative unit, a clinical report, a laboratory or field detection at a named study area, an institutional surveillance function, or a contextual event. Sources reporting only national aggregates without geographic detail are placed at a national centroid and labeled as such. Where several sources described the same place and the same class of evidence, they were combined into a single marker rather than plotted repeatedly, so that marker density does not track publication volume.</p>
+    <p>Primary evidence locations were drawn from the 53 records meeting the review eligibility criteria (Methods &sect;2.2). Contextual and unverified reports are displayed separately and are not counted among those included evidence records. An included source generated a marker where it reported a geographically attributable observation: a surveillance summary for a named administrative unit, a clinical report, a laboratory or field detection at a named study area, an institutional surveillance function, or a contextual event. Sources reporting only national aggregates without geographic detail are placed at a national centroid and labeled as such. Where several sources described the same place and the same class of evidence, they were combined into a single marker rather than plotted repeatedly, so that marker density does not track publication volume.</p>
 
     <h4>Classification, not weighting</h4>
     <p>Markers are classified by pathogen group and by evidence type. They are deliberately <strong>not</strong> weighted into a common risk score, and symbol size carries no quantitative meaning. Evidence type follows the six categories used in the review:</p>
@@ -1306,6 +1306,22 @@ const locations = [
     ],
     notes: 'A front-line oblast with pre-conflict tularemia foci described in the historical distribution literature and low reported leptospirosis notification rates whose completeness is uncertain. Unverified reports of nonspecific febrile illness among personnel have referenced this general area; those reports carry no diagnostic documentation and are shown separately as unverified, not as evidence of disease occurrence here.',
     source: 'Hightower et al. 2014 (Parasit Vectors); Petakh et al. 2024'
+  },
+
+  {
+    id: 'cherkasy_wos',
+    name: 'Cherkasy Oblast — veterinary and tick surveillance',
+    subtitle: 'Pre-conflict Borrelia detection and long-term cattle leptospirosis baseline',
+    lat: 49.44, lng: 32.06,
+    diseases: ['vector', 'leptospirosis'],
+    evidence: 'baseline', quality: 'moderate', geo: 'oblast',
+    stats: [
+      { label: 'Tick sampling', value: '2021; Borrelia PCR and genotyping' },
+      { label: 'Cattle surveillance', value: '2005–2024 retrospective series' },
+      { label: 'Conflict-attributable change', value: 'Not established' }
+    ],
+    notes: 'Web of Science-indexed studies added pre-conflict Borrelia genotype evidence from ticks collected in Cherkasy Oblast and identified Cherkasy among five regions with the largest cumulative bovine leptospirosis burden in a 2005–2024 veterinary series. These findings strengthen the veterinary and ecological baseline; they do not demonstrate conflict-attributable emergence.',
+    source: 'Panteleienko et al. 2023; Ukhovskyi et al. 2025'
   },
 
   // ── CONFLICT-SPECIFIC ECOLOGICAL CONDITIONS ───────────────────────────
@@ -1812,6 +1828,20 @@ const SOURCE_GROUPS = [
     ]
   },
   {
+    title: 'Additional Web of Science-indexed evidence',
+    items: [
+      { ref: 'Ukhovskyi VV, Korniienko LY, Chechet OM, et al. Serological prevalence of <em>Leptospira</em> spp. in horses in Ukraine. <em>Regul Mech Biosyst</em> 2023;14(4):652-659.', doi: '10.15421/022393' },
+      { ref: 'Ukhovskyi VV, Pyskun AV, Korniienko LY, et al. Spatio-temporal analysis of leptospirosis in cattle in Ukraine over 2005-2024. <em>Regul Mech Biosyst</em> 2025;16(3):e25101.', doi: '10.15421/0225101' },
+      { ref: 'Korniienko LY, Ukhovskyi VV, Moroz OA, et al. Epizootological and epidemiological aspects of leptospirosis in Ukraine for the period 2003-2022. <em>Regul Mech Biosyst</em> 2023;14(3):497-505.', doi: '10.15421/022371' },
+      { ref: 'Golubyatnykov MI, Bachynska OV, Dzurtubaieva HM, et al. Genotyping and phylogenetic analysis of <em>Francisella tularensis holarctica</em> strains isolated in Ukraine. <em>World Med Biol</em> 2024;88(2):33-40.', doi: '10.26724/2079-8334-2024-2-88-33-40' },
+      { ref: 'Panteleienko OV, Makovska IF, Tsarenko TM. Influence of ecological and climatic conditions on the spread of <em>Borrelia burgdorferi</em> in domestic dogs in Ukraine. <em>Regul Mech Biosyst</em> 2022;13(4):431-442.', doi: '10.15421/022257' },
+      { ref: 'Panteleienko OV, Garcia D, Bilyk SA, et al. Prevalence and distribution of <em>Borrelia burgdorferi</em> sensu lato genotypes among ixodid ticks in three regions of Ukraine. <em>Regul Mech Biosyst</em> 2023;14(3):511-515.', doi: '10.15421/022373' },
+      { ref: 'Tytar V, Kozynenko I, Pupins M, et al. Species distribution modeling of <em>Ixodes ricinus</em> under current and future climates, with a special focus on Latvia and Ukraine. <em>Climate</em> 2024;12(11):184.', doi: '10.3390/cli12110184' },
+      { ref: 'Didyk YM, Mangová B, Spitalská E, Derdáková M. Rickettsial infection in <em>Ixodes ricinus</em> and <em>Dermacentor reticulatus</em> ticks in urban green areas of Ukraine. <em>Biologia</em> 2023;78(8):2099-2106.', doi: '10.1007/s11756-023-01323-8' },
+      { ref: 'Chumachenko D, Piletskiy P, Sukhorukova M, Chumachenko T. Predictive model of Lyme disease epidemic process using machine learning approach. <em>Appl Sci (Basel)</em> 2022;12(9):4282.', doi: '10.3390/app12094282' }
+    ]
+  },
+  {
     title: 'Non-peer-reviewed observations retained with explicit caveats',
     items: [
       { ref: 'CNN. Rats and mice swarm trenches in Ukraine. 21 January 2024. Used only as a field observation of rodent abundance; no pathogen detection or case ascertainment accompanies it.', tier: 'grey-lit' },
@@ -2228,7 +2258,7 @@ function renderSources() {
            '</div>';
     });
   });
-  h += '<div class="docked-note">The companion structured narrative review screened 69 unique records; 25 were excluded and 44 were included in the evidence synthesis. Included records were ' +
+  h += '<div class="docked-note">The companion structured narrative review screened 86 unique records; 33 were excluded and 53 were included in the evidence synthesis. Included records were ' +
        'appraised across diagnostic certainty, source design, geographic representativeness, temporal relevance, ' +
        'surveillance completeness and directness for conflict-associated change. Entries shaded amber are ' +
        'institutional gray literature; entries shaded red are unverified media or military reports retained only ' +
